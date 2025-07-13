@@ -1,0 +1,111 @@
+{% include 'accounts/partials/header.html' %}
+
+
+<div class="container mt-4 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-5">
+            <div class="form-container">
+                <h2 class="fw-semibold text-dark text-center text-white mb-3">Register User</h2>
+                <form id="registerForm" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input type="text" name="name" id="name" placeholder="Full Name" required
+                            class="login_field border-0">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="username" id="username" placeholder="Username" required
+                            class="login_field border-0">
+                    </div>
+                    <div class="form-group">
+                        <input type="email" name="email" id="email" placeholder="Email" required
+                            class="login_field border-0">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password" id="password" placeholder="Password" required
+                            class="login_field border-0">
+                    </div>
+                    <div class="form-group">
+                        <select name="role" id="role" required class="login_field border-0">
+                            <option value="">Select Role</option>
+                            <option value="1">Admin</option>
+                            <option value="2">Doctor</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="login_btn">Register</button>
+                </form>
+                <div id="responseMessage"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $("#registerForm").submit(function (e) {
+        e.preventDefault();
+
+        const formData = {
+            name: $("#name").val(),
+            username: $("#username").val(),
+            email: $("#email").val(),
+            password: $("#password").val(),
+            role: $("#role").val()
+        };
+
+        const token = localStorage.getItem("api_token");
+        $.ajax({
+            url: "{% url 'register_user' %}",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(formData),
+            dataType: "json",
+            headers: {
+                'Authorization': token
+            },
+            success: function (response) {
+                const alertBox = `
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            ${response.message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+                $("#responseMessage").html(alertBox);
+                if (response.status === "success") {
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1500);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log("❌ AJAX Error Status:", status);
+                console.log("❌ AJAX Error:", error);
+                console.log("❌ Full Response Object:", xhr);
+
+                const responseText = xhr.responseText;
+                let jsonMessage = "";
+
+                try {
+                    const json = JSON.parse(responseText);
+                    jsonMessage = json.message || "No message in JSON.";
+                } catch (err) {
+                    jsonMessage = "Invalid JSON: " + responseText;
+                }
+
+                const alertBox = `
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            ${jsonMessage}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+                $("#responseMessage").html(alertBox);
+            }
+        });
+    });
+</script>
+
+
+
+
+
+
+{% include 'accounts/partials/footer.html' %}

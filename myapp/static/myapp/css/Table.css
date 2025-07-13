@@ -1,0 +1,80 @@
+
+
+body {
+    background-color: #F1EAEA;
+    font-family: "Mulish", serif;
+}
+
+.all-btn {
+    background-color: #E79B38;
+}
+
+.admin-btn {
+    background-color: #CA6B6E;
+}
+
+.doctor-btn {
+    background-color: #478F96;
+}
+
+.patient-btn {
+    background-color: #9AE2C6;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.logo {
+    width: 70px;
+    height: 70px;
+}
+
+.search-icon-1 {
+    background-color: white;
+    border-radius: 10px;
+}
+
+.editBtn {
+    background-color: #9AE2C6;
+    /* Green */
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.editBtn:hover {
+    background-color: #9AE2C6;
+}
+
+.deleteBtn {
+    background-color: #CA6B6E;
+    /* Red */
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.deleteBtn:hover {
+    background-color: #CA6B6E;
+}
+
+.navbar-brand {
+    color: black !important;
+}
+.viewGamesBtn {
+
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}

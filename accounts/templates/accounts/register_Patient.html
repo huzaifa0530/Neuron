@@ -1,0 +1,138 @@
+{% include 'accounts/partials/header.html' %}
+i want here one more option for upload image when user upload image please show what image he selecte after choose
+
+and i wnat when form submit image path save in db and image store in folder and user have choice upload image or submit
+form without image
+<div class="container mt-4 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-5">
+            <div class="form-container">
+                <h2 class="fw-semibold text-dark text-center text-white mb-3">Register Patient</h2>
+                <form id="registerForm" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input type="text" name="name" id="name" placeholder="Full Name" required
+                            class="login_field border-0">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="username" id="username" placeholder="Username" required
+                            class="login_field border-0">
+                    </div>
+                    <div class="form-group">
+                        <input type="email" name="email" id="email" placeholder="Email" required
+                            class="login_field border-0">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="mrno" id="mrno" placeholder="MR. NO" required
+                            class="login_field border-0">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="mobile" id="mobile" placeholder="Mobile" class="login_field border-0">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="age" id="age" placeholder="Age" class="login_field border-0">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="address" id="address" placeholder="Address" class="login_field border-0">
+                    </div>
+                    <div class="form-group">
+                        <label for="profileImage" class="text-white">Upload User Image </label>
+                        <input type="file" name="profile_image" id="profileImage" accept="image/*" class="login_field border-0" >
+                        <img id="previewImage" src="#" alt="Selected Image"
+                            style="display:none; margin-top:10px; max-width:100%; height:auto;" />
+                    </div>
+                    <button type="submit" class="login_btn">Register</button>
+                </form>
+                <div id="responseMessage"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<script>
+  $("#registerForm").submit(function (e) {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("name", $("#name").val());
+    formData.append("username", $("#username").val());
+    formData.append("email", $("#email").val());
+    formData.append("mrno", $("#mrno").val());
+    formData.append("mobile", $("#mobile").val());
+    formData.append("age", $("#age").val());
+    formData.append("address", $("#address").val());
+    if ($("#profileImage")[0].files[0]) {
+        formData.append("profile_image", $("#profileImage")[0].files[0]);
+    }
+
+    const token = localStorage.getItem("api_token");
+    $.ajax({
+        url: "{% url 'api_register_patient' %}",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: {
+            'Authorization': token
+        },
+        success: function (response) {
+            const alertBox = `
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    ${response.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+            $("#responseMessage").html(alertBox);
+            if (response.status === "success") {
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1500);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.log("❌ AJAX Error Status:", status);
+            console.log("❌ AJAX Error:", error);
+            console.log("❌ Full Response Object:", xhr);
+
+            const responseText = xhr.responseText;
+            let jsonMessage = "";
+
+            try {
+                const json = JSON.parse(responseText);
+                jsonMessage = json.message || "No message in JSON.";
+            } catch (err) {
+                jsonMessage = "Invalid JSON: " + responseText;
+            }
+
+            const alertBox = `
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    ${jsonMessage}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+            $("#responseMessage").html(alertBox);
+        }
+    });
+});
+
+
+    // Preview selected image
+$("#profileImage").change(function () {
+    const file = this.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            $("#previewImage").attr("src", e.target.result).show();
+        }
+        reader.readAsDataURL(file);
+    }
+});
+
+</script>
+
+{% include 'accounts/partials/footer.html' %}

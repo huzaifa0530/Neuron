@@ -1,0 +1,629 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Patient List</title>
+    {% include 'myapp/partials/headlink.html' %}
+    <link rel="stylesheet" href="{% static 'myapp/css/Table.css' %}">
+</head>
+
+<body>
+
+    {% include 'myapp/partials/header.html' %}
+
+    <div class="container-fluid">
+        <div style="display: flex;justify-content: space-between;" class="my-3">
+            <h2>Patient List</h2>
+        </div>
+        <table id="PatientTable" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>MRNO</th>
+                    <th>Mobile</th>
+                    <th>Address</th>
+                    <th>Age</th>
+                    <th>Status</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                    <th>Games</th>
+                </tr>
+            </thead>
+        </table>
+
+
+    </div>
+
+
+    <!-- Edit User Modal -->
+    <div id="editModal" class="modal fade" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editUserForm">
+                        <input type="hidden" id="editUserId">
+                        <div class="mb-3">
+                            <label class="form-label">Name:</label>
+                            <input type="text" id="editName" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email:</label>
+                            <input type="email" id="editEmail" class="form-control" required>
+                        </div>
+
+
+                        <input type="password" hidden id="editPassword" class="form-control">
+
+
+                        <input type="text" hidden id="editStatus" value="1" class="form-control">
+
+
+                        <input type="text" hidden id="editRole" value="3" class="form-control">
+
+
+
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" form="editUserForm">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal fade" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this user?</p>
+                    <input type="hidden" id="deleteUserId">
+                </div>
+                <div class="modal-footer">
+                    <button id="confirmDelete" class="btn btn-danger">Yes, Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="gameListModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header  text-white" style="background-color:#EA3B3B;">
+                    <h5 class="modal-title">User's Played Games</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="filterSection" class="mb-3">
+                        <input type="date" id="dateFilter" class="form-control mb-2">
+                        <div class="d-flex justify-content-center gap-2">
+
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="1" id="rsMode"
+                                    name="gameTypeFilter">
+                                <label class="form-check-label" for="rsMode">RS Mode</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="2" id="cptMode"
+                                    name="gameTypeFilter">
+                                <label class="form-check-label" for="cptMode">CPT Mode</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="3" id="vstMode"
+                                    name="gameTypeFilter">
+                                <label class="form-check-label" for="vstMode">VST Mode</label>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <ul id="gameNameList" class="list-group"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="resultModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-white" style="background-color:#EA3B3B;">
+                    <h5 class="modal-title" id="resultModalLabel">Game Results</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+
+                </div>
+                <div class="modal-body">
+                    <table id="resultsTable" class="table table-bordered table-hover">
+
+                        <thead>
+
+                        </thead>
+                        <tbody>
+                            <!-- rows will be filled via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Game Access Modal -->
+    <div id="gameAccessModal" class="modal fade" tabindex="-1" aria-labelledby="gameAccessModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header text-white" style="background-color:#EA3B3B;">
+                    <h5 class="modal-title" id="gameAccessModalLabel">Manage Game Access</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul id="gameAccessList" class="list-group">
+                        <!-- Toggles will be inserted here -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DataTables Script -->
+    <script>
+        const token = localStorage.getItem("api_token");
+        $(document).ready(function () {
+            var table = $('#PatientTable').DataTable({
+                "processing": true,
+                "serverSide": true,
+
+                "ajax": {
+                    url: "/api/get_users/",
+                    type: "GET",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", token);
+                    }
+                },
+                "columns": [
+                    { "data": "id" },
+                    {
+                        "data": "user_image",
+                        "render": function (data, type, row) {
+                            if (data) {
+                                return `<img src="${data}" width="50" height="50" style="object-fit:cover; border-radius:50%;">`;
+                            } else {
+                                return '<span>No Image</span>';
+                            }
+                        }
+                    },
+                    { "data": "name" },
+                    { "data": "username" },
+                    { "data": "email" },
+                    { "data": "mrno" },
+                    { "data": "mobile" },
+                    { "data": "address" },
+                    { "data": "age" },
+                    { "data": "status" },
+                    { "data": "created_at" },
+                    { "data": "actions", "orderable": false, "searchable": false },
+                    { "data": "games", "orderable": false, "searchable": false }
+                ]
+            });
+
+
+
+            $(document).on('click', '.editBtn', function () {
+                let userId = $(this).data('id');
+
+                $.ajax({
+                    url: `/api/get_user_details/${userId}/`,
+                    type: 'GET',
+                    headers: {
+                        'Authorization': token
+                    },
+                    success: function (response) {
+                        console.log("User data fetched:", response);
+
+                        $('#editUserId').val(response.id);
+                        $('#editName').val(response.name);
+                        $('#editUsername').val(response.username);
+                        $('#editEmail').val(response.email);
+                        $('#editRole').empty();
+
+                        response.rolesOptions.forEach(role => {
+                            let selected = role.id === response.role_id ? "selected" : "";
+                            $('#editRole').append(`<option value="${role.id}" ${selected}>${role.role_name}</option>`);
+                        });
+
+                        $('#editStatus').val(response.status === "Active" ? "1" : "0");
+                        $('#editModal').modal('show');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error fetching user data:", error);
+                    }
+                });
+            });
+
+
+
+            $('#editUserForm').submit(function (e) {
+                e.preventDefault();
+
+                let userId = $('#editUserId').val();
+                let formData = {
+                    id: userId,
+                    name: $('#editName').val(),
+                    email: $('#editEmail').val(),
+                    password: $('#editPassword').val(),
+                    role: $('#editRole').val(),  // Should be an ID, not text
+                    status: $('#editStatus').val(),
+                };
+
+                $.ajax({
+                    url: `/api/edit_user/`,
+                    type: 'POST',
+                    headers: {
+                        'Authorization': token
+                    },
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function (response) {
+                        alert(response.success);
+                        $('#editModal').modal('hide');
+                        table.ajax.reload(null, false);
+                    },
+                    error: function (xhr) {
+                        let errorMessage = JSON.parse(xhr.responseText).error;
+                        alert(errorMessage);
+                    }
+                });
+            });
+
+            // Delete User
+            $('#PatientTable').on('click', '.deleteBtn', function () {
+                let userId = $(this).data('id');
+
+                $('#deleteUserId').val(userId);
+                $('#deleteModal').modal('show');
+            });
+
+            $('#confirmDelete').on('click', function () {
+                let userId = $('#deleteUserId').val();
+
+                $.ajax({
+                    url: "{% url 'delete_user' %}",
+                    type: 'POST',
+                    headers: {
+                        "Authorization": token,
+                        "Content-Type": "application/json"
+                    },
+                    data: JSON.stringify({ id: userId }),
+                    success: function (response) {
+                        alert(response.success);
+                        $('#deleteModal').modal('hide');
+                        table.ajax.reload();
+                    }
+                });
+            });
+            // Handle click on individual game item to show results
+            $(document).off('click', '.gameItem').on('click', '.gameItem', function () {
+                const userId = $(this).data('userid');
+                const gameId = $(this).data('gameid');
+                const gamename = $(this).data('gamename');
+                console.log('gameId', gamename);
+                $('.gameItem').removeClass('active');
+                $(this).addClass('active');
+
+                $('#gameListModal').modal('hide');
+
+                $.ajax({
+                    url: `/api/get-game-results/${userId}/${gameId}/`,
+                    method: 'GET',
+                    headers: {
+                        'Authorization': token
+                    },
+                    success: function (data) {
+                        console.log('Data received:', data);
+                        let tableRows = '';
+                        let tableHead = '';
+                        if (gamename == 3) {
+                            tableHead = `
+                    <tr>
+                        <th>Shape</th>
+                        <th>Color</th>
+                        <th>Action</th>
+                        <th>Display Time</th>
+                        <th>Tap Time</th>
+                        <th>Reaction Time (ms)</th>
+                    </tr>
+                `;
+                            data.results.forEach(result => {
+                                console.log('Result item:', result);
+                                const displayTime = new Date(result.display_time);
+                                const tapTime = new Date(result.tap_time);
+                                const reactionTime = tapTime - displayTime;
+
+                                let shapeHTML = '';
+                                const shape = result.shape.toLowerCase().trim();
+                                if (shape === 'circle') {
+                                    shapeHTML = `<div style="width: 100%; height: 100%; border-radius: 50%; background-color: #${result.color};"></div>`;
+                                } else if (shape === 'triangle') {
+                                    shapeHTML = `<div style="width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-bottom: 30px solid #${result.color};"></div>`;
+                                } else if (shape === 'square') {
+                                    shapeHTML = `<div style="width: 100%; height: 100%; background-color: #${result.color};"></div>`;
+                                } else {
+                                    shapeHTML = `<div style="width: 100%; height: 100%; background-color: #${result.color}; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white;">?</div>`;
+                                    console.warn('Unknown shape:', result.shape);
+                                }
+
+                                tableRows += `
+                        <tr>
+                            <td><div style="width: 30px; height: 30px;">${shapeHTML}</div></td>
+                            <td>${result.shape}</td>
+                            <td>${result.action}</td>
+                            <td>${result.display_time}</td>
+                            <td>${result.tap_time}</td>
+                            <td>${reactionTime} ms</td>
+                        </tr>
+                    `;
+                            });
+                      
+                            console.log('Final tableRows:', tableRows);
+
+                        }
+                        
+                        
+                        else if (gamename == 2) {
+                            tableHead = `
+                    <tr>
+                        <th>Letter</th>
+                        <th>Appearing Time</th>
+                        <th>Tap Time</th>
+                        <th>Action</th>
+                        <th>Reaction Time (ms)</th>
+                    </tr>
+                `;
+                            (data.results || []).forEach(result => {
+                                const appearingTime = new Date(result.appearing_time);
+                                const tapTime = result.tap_time ? new Date(result.tap_time) : null;
+                                const reactionTime = tapTime ? `${tapTime - appearingTime} ms` : 'N/A';
+
+                                tableRows += `
+                        <tr>
+                            <td>${result.letter}</td>
+                            <td>${result.appearing_time}</td>
+                            <td>${result.tap_time || 'Not tapped'}</td>
+                            <td>${result.action}</td>
+                            <td>${reactionTime}</td>
+                        </tr>
+                    `;
+                            });
+                        }
+                        $('#resultsTable thead').html(tableHead);
+                        $('#resultsTable tbody').html(tableRows);
+                        $('#resultModal').modal('show');
+                    },
+                    error: function () {
+                        alert('Failed to fetch game results.');
+                    }
+                });
+            });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const GAME_MAP = {
+                '1': 'RS Mode',
+                '2': 'CPT Mode',
+                '3': 'VST Mode'
+            };
+
+            // Handle click on view games button
+            $(document).on('click', '.viewGamesBtn', function () {
+                let userId = $(this).data('userid');
+                window.currentUserId = userId;
+
+                fetchAllGames(userId); // Just fetch all games
+            });
+
+            // Handle change on date or checkbox filters
+            $(document).on('change', '#dateFilter, input[name="gameTypeFilter"]', function () {
+                applyFilters();
+            });
+
+            // Fetch all games (no filter)
+            function fetchAllGames(userId) {
+                $.ajax({
+                    url: `/api/user-games/${userId}`,
+                    type: 'GET',
+                    headers: {
+                        'Authorization': token
+                    },
+                    success: function (games) {
+                        renderGameList(games);
+                        $('#userListModal').modal('hide');
+                        $('#gameListModal').modal('show');
+                    },
+                    error: function () {
+                        alert('Error fetching game names.');
+                    }
+                });
+            }
+
+            function applyFilters() {
+                let selectedDate = $('#dateFilter').val();
+                let selectedGameTypes = [];
+
+                $('input[name="gameTypeFilter"]:checked').each(function () {
+                    selectedGameTypes.push($(this).val());
+                });
+
+                let userId = window.currentUserId;
+
+                // If no date is selected, just fetch all games
+                if (!selectedDate) {
+                    fetchAllGames(userId);
+                    return;
+                }
+
+                $.ajax({
+                    url: `/api/user-games-by-date/${userId}?date=${selectedDate}`,
+                    type: 'GET',
+                    headers: {
+                        'Authorization': token
+                    },
+                    success: function (games) {
+                        if (selectedGameTypes.length > 0) {
+                            games = games.filter(game => selectedGameTypes.includes(String(game.name)));
+                        }
+                        renderGameList(games);
+                    },
+                    error: function () {
+                        alert('Error filtering games.');
+                    }
+                });
+            }
+
+            function renderGameList(games) {
+                let list = $('#gameNameList');
+                list.empty(); // only clear games, not filters
+
+                games.forEach((game, index) => {
+
+                    let name = GAME_MAP[String(game.name)] || `Game ${game.id}`;
+                    let date = game.date || '';
+
+                    list.append(`
+            <li class="list-group-item gameItem d-flex align-items-center flex-grow-1" data-userid="${window.currentUserId}" data-gameid="${game.id}"  data-gamename="${game.name}"">
+                <div class="flex-grow-1">
+                    <strong>${name}</strong><br>
+                    <small style="color: gray;">${date}</small>
+                </div>
+            </li>
+        `);
+                });
+            }
+
+
+
+
+
+
+
+
+
+            $(document).on('click', '.patientNameLink', function () {
+                const userId = $(this).data('id');
+                const GAME_MAP = {
+                    1: 'RS Mode',
+                    2: 'CPT Mode',
+                    3: 'VST Mode'
+                };
+
+                $.ajax({
+                    url: `/api/get_games_name/${userId}`,
+                    type: 'GET',
+                    headers: {
+                        'Authorization': token
+                    },
+                    success: function (userGames) {
+                        const list = $('#gameAccessList');
+                        list.empty();
+
+                        Object.entries(GAME_MAP).forEach(([id, name]) => {
+                            const gameKey = `game${id}`;
+                            const isAllowed = userGames[gameKey] === 1;
+                            const toggleId = `game-access-${id}`;
+
+                            list.append(`
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                ${name}
+                <div class="form-check form-switch">
+                    <input class="form-check-input game-access-toggle" 
+                           type="checkbox" 
+                           id="${toggleId}"
+                           data-userid="${userId}" 
+                           data-gameid="${id}" 
+                           ${isAllowed ? 'checked' : ''}>
+                </div>
+            </li>
+        `);
+                        });
+
+                        $('#gameAccessModal').modal('show');
+                    },
+
+
+                    error: function () {
+                        alert('Error loading game access.');
+                    }
+                });
+            });
+            // Handle toggle switch change
+
+
+
+            $(document).off('change', '.game-access-toggle').on('change', '.game-access-toggle', function () {
+                const userId = $(this).data('userid');
+                const gameId = $(this).data('gameid');
+                const isChecked = $(this).is(':checked');
+
+                $.ajax({
+                    url: '/api/toggle_game_access/',
+                    type: 'POST',
+                    headers: {
+                        'Authorization': token
+                    },
+                    data: JSON.stringify({
+                        user_id: userId,
+                        game_id: gameId
+                    }),
+                    contentType: 'application/json',
+                    success: function (response) {
+                        console.log(response.message);
+                    },
+                    error: function (xhr) {
+                        alert('Failed to toggle game access.');
+                        // Roll back toggle if failed
+                        $(this).prop('checked', !isChecked);
+                    }
+                });
+            });
+
+
+
+
+
+
+
+        });
+
+    </script>
+
+
+
+    {% include 'myapp/partials/footer.html' %}

@@ -1,0 +1,228 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Users List</title>
+    {% include 'myapp/partials/headlink.html' %}
+    <link rel="stylesheet" href="{% static 'myapp/css/Table.css' %}">
+</head>
+
+<body>
+
+    {% include 'myapp/partials/header.html' %}
+
+    <div class="container-fluid">
+        <div style="display: flex;justify-content: space-between;" class="my-3">
+            <h2>Users List</h2>
+        </div>
+        <table id="usersTable" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+
+    <!-- Edit User Modal -->
+    <div id="editModal" class="modal fade" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editUserForm">
+                        <input type="hidden" id="editUserId">
+                        <div class="mb-3">
+                            <label class="form-label">Name:</label>
+                            <input type="text" id="editName" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email:</label>
+                            <input type="email" id="editEmail" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password:</label>
+                            <input type="password" id="editPassword" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Status:</label>
+
+                            <select id="editStatus" class="form-select">
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Role:</label>
+
+                            <select id="editRole" class="form-select"></select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" form="editUserForm">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal fade" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this user?</p>
+                    <input type="hidden" id="deleteUserId">
+                </div>
+                <div class="modal-footer">
+                    <button id="confirmDelete" class="btn btn-danger">Yes, Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- DataTables Script -->
+    <script>
+        const token = localStorage.getItem("api_token");
+        $(document).ready(function () {
+
+            var table = $('#usersTable').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    url: "/api/get_users/",
+                    type: "GET",
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", token);
+                    }
+                },
+                "columns": [
+                    { "data": "id" },
+                    { "data": "name" },
+                    { "data": "username" },
+                    { "data": "email" },
+                    { "data": "role" },
+                    { "data": "status" },
+                    { "data": "created_at" },
+                    { "data": "actions", "orderable": false, "searchable": false }
+                ]
+            });
+
+
+
+            $(document).on('click', '.editBtn', function () {
+                let userId = $(this).data('id');
+
+                $.ajax({
+                    url: `/api/get_user_details/${userId}/`,
+                    type: 'GET',
+                    headers: {
+                        'Authorization': token
+                    },
+                    success: function (response) {
+                        console.log("User data fetched:", response);
+
+                        $('#editUserId').val(response.id);
+                        $('#editName').val(response.name);
+                        $('#editUsername').val(response.username);
+                        $('#editEmail').val(response.email);
+                        $('#editRole').empty();
+
+                        response.rolesOptions.forEach(role => {
+                            let selected = role.id === response.role_id ? "selected" : "";
+                            $('#editRole').append(`<option value="${role.id}" ${selected}>${role.role_name}</option>`);
+                        });
+
+                        $('#editStatus').val(response.status === "Active" ? "1" : "0");
+                        $('#editModal').modal('show');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error fetching user data:", error);
+                    }
+                });
+            });
+
+
+
+            $('#editUserForm').submit(function (e) {
+                e.preventDefault();
+
+                let userId = $('#editUserId').val();
+                let formData = {
+                    id: userId,
+                    name: $('#editName').val(),
+                    email: $('#editEmail').val(),
+                    password: $('#editPassword').val(),
+                    role: $('#editRole').val(),  // Should be an ID, not text
+                    status: $('#editStatus').val(),
+                };
+
+                $.ajax({
+                    url: `/api/edit_user/`,
+                    type: 'POST',
+                    headers: {
+                        "Authorization": token
+                    },
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function (response) {
+                        alert(response.success);
+                        $('#editModal').modal('hide');
+                        table.ajax.reload(null, false);
+                    },
+                    error: function (xhr) {
+                        let errorMessage = JSON.parse(xhr.responseText).error;
+                        alert(errorMessage);
+                    }
+                });
+            });
+
+            // Delete User
+            $('#usersTable').on('click', '.deleteBtn', function () {
+                let userId = $(this).data('id');
+
+                $('#deleteUserId').val(userId);
+                $('#deleteModal').modal('show');
+            });
+
+            $('#confirmDelete').on('click', function () {
+                let userId = $('#deleteUserId').val();
+
+                $.ajax({
+                    url: "{% url 'delete_user' %}",
+                    type: 'POST',
+                    headers: {
+                        "Authorization": token,
+                        "Content-Type": "application/json"
+                    },
+                    data: JSON.stringify({ id: userId }),
+                    success: function (response) {
+                        alert(response.success);
+                        $('#deleteModal').modal('hide');
+                        table.ajax.reload();
+                    }
+                });
+            });
+        });
+
+
+    </script>
+
+{% include 'myapp/partials/footer.html' %}
+   

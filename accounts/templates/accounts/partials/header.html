@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap"
+        rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'myapp/css/form.css' %}">
+        <script src="{% static 'myapp/js/session-handler.js' %}"></script>
+</head>
+<body class="bg-dark">
+    <!-- Header & Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark dashboard-navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <img src="{% static 'myapp/assets/image001 1.png' %}" alt="Logo" class="logo"> NEURON
+
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto" style="align-items:center;">
+                    <li class="nav-item ms-3">
+                        <div class="search-icon-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-search m-2" viewBox="0 0 16 16">
+                                <path
+                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                            </svg>
+                        </div>
+
+                    </li>
+                    <li class="nav-item ms-3">
+                        <div class="search-icon-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-bell m-2" viewBox="0 0 16 16">
+                                <path
+                                    d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6" />
+                            </svg>
+                        </div>
+
+                    </li>
+                    <div class="dropdown ms-3 dropstart">
+                        <button class="btn dropdown-toggle text-white navbar-dropdown-btn border-0" type="button"
+                            id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ request.session.username }}
+                                <img src="{% static 'myapp/assets/image001 1.png' %}" alt=""
+                                style="width: 40px; height: 40px;">
+
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            {% if request.session.role_name == "admin" %}
+                            <li><a class="dropdown-item" href="/accounts/register">Register User</a></li>
+                            <li><a class="dropdown-item" href="/users">View Users</a></li>
+                        {% else %}
+                            <li><a class="dropdown-item" href="/accounts/register-patient/">Register Patient</a></li>
+                            <li><a class="dropdown-item" href="/users">View Patient</a></li>
+                        {% endif %}
+                            <li><a class="dropdown-item" href="/accounts/logout/">Logout</a></li>
+                        </ul>
+
+                    </div>
+                </ul>
+            </div>
+        </div>
+    </nav>

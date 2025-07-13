@@ -1,0 +1,267 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Patient</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: "Mulish", serif;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: 1px solid #ced4da;
+        }
+
+        .form-group select {
+            cursor: pointer;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #responseMessage {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        footer {
+            margin-top: 50px;
+        }
+
+        .lb-logo {
+            width: 70px;
+            height: 70px;
+        }
+
+        .login_field {
+            background-color: black;
+            color: white;
+            border-radius: 0px !important;
+        }
+
+
+        .login_field::placeholder {
+            color: grey
+        }
+
+        .login_btn {
+            background-color: #EA3B3B;
+            color: white;
+            border: none;
+            border-radius: 0px !important;
+        }
+
+
+        .login_btn:hover {
+            background-color: #EA3B3B !important;
+            color: white;
+            border-radius: 30px;
+            border: none;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logo {
+            width: 70px;
+            height: 70px;
+        }
+
+        .search-icon-1 {
+            background-color: white;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="bg-dark">
+    <!-- Header & Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark dashboard-navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="{% static 'myapp/assets/image001 1.png' %}" alt="Logo" class="logo"> NEURON
+
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto" style="align-items:center;">
+                    <li class="nav-item ms-3">
+                        <div class="search-icon-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-search m-2" viewBox="0 0 16 16">
+                                <path
+                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                            </svg>
+                        </div>
+
+                    </li>
+                    <li class="nav-item ms-3">
+                        <div class="search-icon-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-bell m-2" viewBox="0 0 16 16">
+                                <path
+                                    d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6" />
+                            </svg>
+                        </div>
+
+                    </li>
+                    <div class="dropdown ms-3 dropstart">
+                        <button class="btn dropdown-toggle text-white navbar-dropdown-btn border-0" type="button"
+                            id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="{% static 'myapp/assets/image001 1.png' %}" alt=""
+                                style="width: 40px; height: 40px;">
+
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li><a class="dropdown-item" href="/accounts/register">Register Patient</a></li>
+                                            <li><a class="dropdown-item" href="/users">View Patient</a></li>
+                                            <li><a class="dropdown-item" href="/accounts/logout/">Logout</a></li>
+                        </ul>
+
+                    </div>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container mt-4 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-5">
+                <div class="form-container">
+                    <h2 class="fw-semibold text-dark text-center text-white mb-3">Register Patient</h2>
+                    <form id="registerForm" method="POST">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input type="text" name="name" id="name" placeholder="Full Name" required
+                                class="login_field border-0">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="username" id="username" placeholder="Username" required
+                                class="login_field border-0">
+                        </div>
+                        <div class="form-group">
+                            <input type="email" name="email" id="email" placeholder="Email" required class="login_field border-0">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="mrno" id="mrno" placeholder="MR. NO" required class="login_field border-0">
+                        </div>
+                        <button type="submit" class="login_btn">Register</button>
+                    </form>
+                    <p id="responseMessage"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $("#registerForm").submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: "{% url 'register_user' %}",
+                type: "POST",
+                data: $(this).serialize(),
+                dataType: "json",
+                success: function (response) {
+                    $("#responseMessage").text(response.message);
+                    if (response.status === "success") {
+                        window.location.href = "/";  // Adjust this URL as needed
+                    }
+                }
+            });
+        });
+    </script>
+
+
+<script>
+    $("#registerForm").submit(function (e) {
+        e.preventDefault();
+
+        const formData = {
+            name: $("#name").val(),
+            username: $("#username").val(),
+            email: $("#email").val(),
+            password: $("#password").val(),
+            role: $("#role").val()
+        };
+
+        const token = localStorage.getItem("api_token"); 
+        $.ajax({
+            url: "{% url 'register_user' %}",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(formData),
+            dataType: "json",
+            headers: {
+                'Authorization': token  
+            },
+            success: function (response) {
+                $("#responseMessage").text(response.message);
+                if (response.status === "success") {
+                    window.location.href = '/';
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log("❌ AJAX Error Status:", status);
+                console.log("❌ AJAX Error:", error);
+                console.log("❌ Full Response Object:", xhr);
+
+                const responseText = xhr.responseText;
+                let jsonMessage = "";
+
+                try {
+                    const json = JSON.parse(responseText);
+                    jsonMessage = json.message || "No message in JSON.";
+                } catch (err) {
+                    jsonMessage = "Invalid JSON: " + responseText;
+                }
+
+                $("#responseMessage").text("Server error: " + jsonMessage);
+            }
+        });
+    });
+</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

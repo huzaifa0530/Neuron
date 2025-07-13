@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Patient List</title>
+    {% include 'myapp/partials/headlink.html' %}
+    <link rel="stylesheet" href="{% static 'myapp/css/Table.css' %}">
+</head>
+
+<body>
+
+    {% include 'myapp/partials/header.html' %}
+    <!-- Bootstrap Form for Setting Time -->
+    <div class="container mt-5">
+        <div class="card shadow p-4">
+            <h2 class="mb-4 text-center" style="color:#EA3B3B;">Set Game Time</h2>
+
+            <form id="settingTimeForm">
+                <div class="mb-3">
+                    <label for="gametime" class="form-label">Game Time</label>
+                    <input type="text" class="form-control" id="gametime" name="gametime" placeholder="Enter Game Time"
+                        value="{{ user.game_time }}">
+
+                </div>
+
+                <div class="mb-3">
+                    <label for="demotime" class="form-label">Demo Time</label>
+                    <input type="text" class="form-control" id="demotime" name="demotime" placeholder="Enter Demo Time"
+                        value="{{ user.demo_time }}">
+
+                </div>
+                <div class="mb-3">
+                    <label for="gametime" class="form-label">Game Time Interval</label>
+                    <input type="text" class="form-control" id="gametimeinterval" name="gametimeinterval" placeholder="Enter Game Time Interval"
+                        value="{{ user.game_time_interval }}">
+
+                </div>
+                <div class="mb-3">
+                    <label for="demotime" class="form-label">Demo Time Interval</label>
+                    <input type="text" class="form-control" id="demotimeinterval" name="demotimeinterval" placeholder="Enter Demo Time Interval"
+                        value="{{ user.demo_time_interval }}">
+
+                </div>
+                <button type="submit" class="btn btn-danger w-100">Submit</button>
+            </form>
+
+            <div id="settingTimeResponse" class="mt-3"></div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem("api_token");
+        $(document).ready(function () {
+            $('#settingTimeForm').on('submit', function (e) {
+                e.preventDefault();
+
+                let gametime = $('#gametime').val();
+                let demotime = $('#demotime').val();
+                let demotimeinterval = $('#demotimeinterval').val();
+                let gametimeinterval = $('#gametimeinterval').val();
+                $.ajax({
+                    url: '/api/setting/',
+                    type: 'POST',
+                    headers: {
+                        'Authorization': token  // your token if needed
+                    },
+                    data: {
+                        gametime: gametime,
+                        demotime: demotime,
+                        gametimeinterval: gametimeinterval,
+                        demotimeinterval: demotimeinterval
+                    },
+                    success: function (response) {
+                        $('#settingTimeResponse').html(`
+                        <div class="alert alert-success" role="alert">
+                            ${response.success}
+                        </div>
+                    `);
+                    },
+                    error: function (xhr) {
+                        let errorMsg = "Something went wrong.";
+                        if (xhr.responseJSON) {
+                            errorMsg = JSON.stringify(xhr.responseJSON);
+                        }
+                        $('#settingTimeResponse').html(`
+                        <div class="alert alert-danger" role="alert">
+                            ${errorMsg}
+                        </div>
+                    `);
+                    }
+                });
+            });
+        });
+    </script>
+
+
+    {% include 'myapp/partials/footer.html' %}

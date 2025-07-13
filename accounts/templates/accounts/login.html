@@ -1,0 +1,146 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+        body {
+            font-family: "Poppins", serif;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+        }
+
+        .login_field {
+            background-color: black;
+            color: white;
+            border-radius: 0px !important;
+        }
+
+        .login_field::placeholder {
+            color: grey;
+        }
+
+        .login_btn {
+            background-color: #EA3B3B;
+            color: white;
+            border: none;
+            border-radius: 0px !important;
+        }
+
+        .login_btn:hover {
+            background-color: #EA3B3B !important;
+            color: white;
+            border-radius: 30px;
+            border: none;
+        }
+
+        .nav-link {
+            color: white !important;
+        }
+
+        .navbar-dropdown-btn:active {
+            border: none !important;
+        }
+
+        .fp {
+            text-decoration: none !important;
+        }
+    </style>
+</head>
+
+<body class="bg-dark">
+    <div class="container mt-3">
+        <div class="row justify-content-center">
+            <div class="col-md-5 text-center">
+                <img src="{% static 'myapp/assets/image001 1.png' %}" alt="Logo" class="logo mb-2 mt-3">
+                <h3 class="fw-normal text-white">NEURON PORTAL</h3>
+                <h6 class="text-center mb-4 text-secondary">Log In. To see it in action</h6>
+
+                <!-- Display Messages -->
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+                {% endif %}
+
+                <form method="POST">
+                    {% csrf_token %}
+                      <!-- Hidden input (or use select dropdown for visible choice) -->
+                    <input type="hidden" name="role_type" id="role_type" value="adminOrdoctor">
+                    <div class="mb-5 text-start">
+                        <input type="text" name="username" class="form-control login_field border-0" required
+                            placeholder="Enter Username">
+                    </div>
+                  
+               
+
+                    <div class="mb-5 text-start">
+                        <input type="password" name="password" class="form-control login_field" required
+                            placeholder="Enter Password">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 login_btn fs-5 py-2 mb-3">Login</button>
+                    <p class="mb-4"><a href="" class="fp">Forget password?</a></p>
+
+                    <p class="mt-5 text-white mb-2">Not Registered?</p>
+                    <button type="button" class="btn btn-primary w-100 login_btn fs-5 mb-3">Sign Up</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+
+        document.querySelector('form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            var username = document.querySelector('input[name="username"]').value;
+            var password = document.querySelector('input[name="password"]').value;
+            var role_type = document.querySelector('input[name="role_type"]').value; 
+            var data = {
+                username: username,
+                password: password,
+                role_type: role_type
+            };
+
+
+            fetch("{% url 'api-login' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+
+                        localStorage.setItem("api_token", data.token);
+
+                        window.location.href = "{% url 'home' %}";
+                    } else {
+                       
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+
+</body>
+
+</html>

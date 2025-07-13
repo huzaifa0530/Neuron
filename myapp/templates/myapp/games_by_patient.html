@@ -1,0 +1,42 @@
+<!-- templates/games_by_patient.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Patient Games</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container my-4">
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Game Name</th>
+                <th>Result</th>
+                <th>Remarks</th>
+                <th>Status</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for game in games %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ game.name }}</td>
+                <td>{{ game.result }}</td>
+                <td>{{ game.remarks }}</td>
+                <td>{{ game.status }}</td>
+                <td>{{ game.created_at }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No games found for this patient.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="javascript:history.back()" class="btn btn-secondary">Back</a>
+</div>
+</body>
+</html>

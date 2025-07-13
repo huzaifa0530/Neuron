@@ -1,0 +1,97 @@
+
+body {
+    font-family: "Mulish", serif;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+}
+
+.form-group select {
+    cursor: pointer;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#responseMessage {
+    text-align: center;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+footer {
+    margin-top: 50px;
+}
+
+.lb-logo {
+    width: 70px;
+    height: 70px;
+}
+
+.login_field {
+    background-color: black;
+    color: white;
+    border-radius: 0px !important;
+}
+
+
+.login_field::placeholder {
+    color: grey
+}
+
+.login_btn {
+    background-color: #EA3B3B;
+    color: white;
+    border: none;
+    border-radius: 0px !important;
+}
+
+
+.login_btn:hover {
+    background-color: #EA3B3B !important;
+    color: white;
+    border-radius: 30px;
+    border: none;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.logo {
+    width: 70px;
+    height: 70px;
+}
+
+.search-icon-1 {
+    background-color: white;
+    border-radius: 10px;
+}

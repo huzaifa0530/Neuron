@@ -1,0 +1,116 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Dashboard</title>
+    {% include 'myapp/partials/headlink.html' %}
+    <link rel="stylesheet" href="{% static 'myapp/css/home.css' %}">
+
+</head>
+
+<body>
+    {% include 'myapp/partials/header.html' %}
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+        <div class="row mt-4">
+            <!-- Total Users Card -->
+            <div class="col-md-3">
+                <div class="card text-white mb-3">
+                    <div class="card-header d-flex">
+                        <div class="icon-container-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor"
+                                 class="bi bi-people-fill icon-1" viewBox="0 0 16 16">
+                                <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
+                            </svg>
+                        </div>
+                        <h6 class="ms-3 text-dark">
+                            Total Users
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="text-dark fw-normal">80%</h1>
+                        <a name="" id="" class="btn btn-first btn-sm" href="#" role="button">Normal</a>
+
+                        <h5 class="card-title">{{ total_users }}</h5>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Admins Card -->
+            <div class="col-md-3">
+                <div class="card text-white mb-3">
+                    <div class="card-header d-flex">
+                        <div class="icon-container-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor"
+                            class="bi bi-people-fill icon-1" viewBox="0 0 16 16">
+                            <path
+                                d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
+                        </svg>
+                        </div>
+                        <h6 class="ms-3 text-dark">
+                            Admin
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="text-dark fw-normal">80%</h1>
+                        <a name="" id="" class="btn btn-first btn-sm" href="#" role="button">Normal</a>
+
+                        <h5 class="card-title">{{ total_admins }}</h5>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Doctors Card -->
+            <div class="col-md-3">
+                <div class="card text-white mb-3">
+                    <div class="card-header d-flex">
+                        <div class="icon-container-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor"
+                            class="bi bi-people-fill icon-1" viewBox="0 0 16 16">
+                            <path
+                                d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
+                        </svg>
+                        </div>
+                        <h6 class="ms-3 text-dark">
+                            Doctors
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="text-dark fw-normal">80%</h1>
+                        <a name="" id="" class="btn btn-first btn-sm" href="#" role="button">Normal</a>
+
+                        <h5 class="card-title">{{ total_doctors }}</h5>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Patients Card -->
+            <div class="col-md-3">
+                <div class="card text-white mb-3">
+                    <div class="card-header d-flex">
+                        <div class="icon-container-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor"
+                            class="bi bi-people-fill icon-1" viewBox="0 0 16 16">
+                            <path
+                                d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
+                        </svg>
+                        </div>
+                        <h6 class="ms-3 text-dark">
+                            Patients
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="text-dark fw-normal">80%</h1>
+                        <a name="" id="" class="btn btn-first btn-sm" href="#" role="button">Normal</a>
+
+                        <h5 class="card-title">{{ total_patients }}</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include 'myapp/partials/footer.html' %}
+   

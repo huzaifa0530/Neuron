@@ -1,0 +1,54 @@
+
+  body {
+      background-color: #F1EAEA;
+      font-family: "Mulish", serif;
+  }
+  .card {
+      border: 0px;
+  }
+  .icon-1 {
+      color: #E79B38;
+      margin: 12px;
+  }
+  .icon-container-1 {
+      background-color: #F8DEBD;
+      border-radius: 10px;
+  }
+  .card-header {
+      align-items: baseline;
+      background-color: white;
+      border: none !important;
+  }
+  .logo {
+      width: 70px;
+      height: 70px;
+  }
+  .dashboard-navbar {
+      background-color: #F1EAEA;
+  }
+  .navbar-brand {
+      color: black !important;
+  }
+  .nav-link {
+      color: black !important;
+  }
+  .btn-first {
+      background-color: #F8DEBD;
+  }
+  .bi-search, .bi-bell {
+      color: black;
+  }
+  .search-icon-1 {
+      background-color: white;
+      border-radius: 10px;
+  }
+  .navbar-dropdown-btn:active {
+      border: none !important;
+  }
+  .navbar-brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+  }
+  .card-title{
+      color: black;
+  }
