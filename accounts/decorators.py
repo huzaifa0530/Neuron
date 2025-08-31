@@ -10,7 +10,7 @@ def token_required(view_func):
 
         if not token:
             return Response(
-                {'message': 'Session expired. Please login again.', 'redirect': True},
+                {'message': 'Authorization token is missing.', 'redirect': True},
                 status=status.HTTP_401_UNAUTHORIZED
             )
 

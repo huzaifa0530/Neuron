@@ -349,7 +349,9 @@
                                 <div class="dropdown-menu" aria-labelledby="triggerId" id="patientsDropdown">
                                     {% if patients %}
                                     {% for patient in patients %}
-                                    <a class="dropdown-item" href="#" data-id="{{ patient.id }}"  data-name="{{ patient.name }}"  data-mrno="{{ patient.mrno }}">{{ patient.name }}</a>
+                                    <a class="dropdown-item" href="#" data-id="{{ patient.id }}"
+                                        data-name="{{ patient.name }}" data-mrno="{{ patient.mrno }}">{{ patient.name
+                                        }}</a>
                                     {% endfor %}
                                     {% else %}
                                     <span class="dropdown-item disabled">No Patients Found</span>
@@ -407,12 +409,12 @@
                                         <input type="text" class="form-control rounded-3" name="" id="userNameInput"
                                             aria-describedby="helpId" placeholder="User Name" disabled />
                                     </div>
-                                    
+
                                     <div class="mb-3">
                                         <input type="text" class="form-control rounded-3" name="" id="userMrnoInput"
-                                            aria-describedby="helpId" placeholder="MRNO" disabled/>
+                                            aria-describedby="helpId" placeholder="MRNO" disabled />
                                     </div>
-                                    
+
                                 </div>
 
 
@@ -495,26 +497,28 @@
 
                     </a>
                     <div class="d-flex flex-column">
-
-                        <button class="p-2 sidebar-btn-active m-2" data-bs-toggle="tooltip" data-bs-placement="right"
-                            title="Dashboard">
+                        <!-- Dashboard Button -->
+                        <button onclick="window.location.href='{% url 'home' %}'" class="p-2 sidebar-btn-active m-2"
+                            data-bs-toggle="tooltip" data-bs-placement="right" title="Dashboard">
                             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
                                 class="bi bi-house-door-fill" viewBox="0 0 16 16">
                                 <path
-                                    d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5" />
+                                    d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5-.5" />
                             </svg>
                         </button>
 
-                        <button class="p-2 sidebar-btn m-2" data-bs-toggle="tooltip" data-bs-placement="right"
-                            title="Calendar">
+                        <!-- Feedback Button -->
+                        <button onclick="window.location.href='{% url 'feedback_show' %}'" class="p-2 sidebar-btn m-2"
+                            data-bs-toggle="tooltip" data-bs-placement="right" title="Feedback">
                             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
-                                class="bi bi-calendar-check" viewBox="0 0 16 16">
+                                class="bi bi-chat-dots" viewBox="0 0 16 16">
+                                <path d="M2 0a2 2 0 0 0-2 2v12l3-3h11a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
                                 <path
-                                    d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0" />
-                                <path
-                                    d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
+                                    d="M3 7.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
                             </svg>
                         </button>
+
+
 
                         <button class="p-2 sidebar-btn m-2" data-bs-toggle="tooltip" data-bs-placement="right"
                             title="Chat">
@@ -639,7 +643,7 @@
                                                     Patient</a></li>
                                             <li><a class="dropdown-item" href="/users">View Patient</a></li>
                                             <li><a class="dropdown-item" href="/setting">Setting</a></li>
-                                     
+
                                             <li><a class="dropdown-item" href="/accounts/logout/">Logout</a></li>
                                         </ul>
                                     </div>
@@ -703,7 +707,7 @@
                                     </div>
                                     <div class="card-body">
                                         <h1 class="text-dark fw-normal">
-                                            {{ total_patients }}
+                                            {{ active_patients }}
                                         </h1>
                                         <a name="" id="" class="btn btn-second btn-sm" href="#" role="button">Normal</a>
                                         <!-- Line Chart -->
@@ -738,7 +742,7 @@
                                     </div>
                                     <div class="card-body">
                                         <h1 class="text-dark fw-normal">
-                                            {{total_patients}}
+                                            {{ inactive_patients }}
                                         </h1>
                                         <a name="" id="" class="btn btn-third btn-sm" href="#" role="button">Normal</a>
                                         <!-- Line Chart -->
@@ -803,7 +807,7 @@
         const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-based
         const year = today.getFullYear();
         document.getElementById('current-date').textContent = `${day}-${month}-${year}`;
-      </script>
+    </script>
     <!-- Chart.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
@@ -816,7 +820,7 @@
     </script>
     <script>
         $(document).ready(function () {
-      
+
 
             $("#blackDiv").click(function () {
                 $(this).toggleClass("expanded");
@@ -833,26 +837,26 @@
 
     </script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const dropdownItems = document.querySelectorAll('.dropdown-item');
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const dropdownItems = document.querySelectorAll('.dropdown-item');
 
-        dropdownItems.forEach(function(item) {
-            item.addEventListener('click', function(event) {
-                const name = this.getAttribute('data-name');
-                const mrno = this.getAttribute('data-mrno');
+            dropdownItems.forEach(function (item) {
+                item.addEventListener('click', function (event) {
+                    const name = this.getAttribute('data-name');
+                    const mrno = this.getAttribute('data-mrno');
 
-                // Only prevent default if it's a "patient" item
-                if (name && mrno) {
-                    event.preventDefault();
-                    document.getElementById('userNameInput').value = name;
-                    document.getElementById('userMrnoInput').value = mrno;
-                }
-                // otherwise, let normal redirect happen
+                    // Only prevent default if it's a "patient" item
+                    if (name && mrno) {
+                        event.preventDefault();
+                        document.getElementById('userNameInput').value = name;
+                        document.getElementById('userMrnoInput').value = mrno;
+                    }
+                    // otherwise, let normal redirect happen
+                });
             });
         });
-    });
-</script>
+    </script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {

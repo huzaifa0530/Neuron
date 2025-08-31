@@ -16,8 +16,8 @@ from accounts.models import CustomUser
 from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Game
-from .serializers import GameSerializer
+from .models import Feedback, Game
+from .serializers import GameSerializer,FeedbackSerializer
 from django.utils.dateparse import parse_date
 
 @api_view(['GET'])
@@ -41,11 +41,11 @@ def get_game_results(request, user_id, game_id):
 def get_game_results_by_user(request, user_id, game_id):
     try:
         games = Game.objects.filter(patient_id_fk=user_id, id=game_id)
-        print(f"Found games: {games}")  # 🛠 print what you found
+        print(f"Found games: {games}")  
 
         results = []
         for game in games:
-            print(f"Game result: {game.result}")  # 🛠 print each game's result
+            print(f"Game result: {game.result}")
             if isinstance(game.result, list):
                 results.extend(game.result)
 
@@ -146,10 +146,17 @@ def home(request):
             print("No patients found for doctor id", created_by)
 
         patients_list = [{'id': p.id, 'name': p.name,'mrno':p.mrno} for p in patients]
+        
+        active_patients = CustomUser.objects.filter(role_id_fk=3, created_by=created_by, status=1).count()
+
+    
+        inactive_patients = CustomUser.objects.filter(role_id_fk=3, created_by=created_by, status=0).count()
 
     
         return render(request, 'myapp/doctor_dashboard.html', {
             'total_patients': total_patients,
+            'active_patients': active_patients,
+            'inactive_patients': inactive_patients,
             'patients': patients_list,
         })
 
@@ -451,12 +458,39 @@ def get_game_by_id(request, game_id):
 @token_required
 def create_game(request):
     data = request.data
+    patient_id = data.get("patient_id_fk")
+    game_name = data.get("name")
+
+    # validate & save game
     serializer = GameSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
-        return Response({"success": "Game created successfully", "game": serializer.data}, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        # Update the related CustomUser
+        try:
+            user = CustomUser.objects.get(id=patient_id)
+
+            if str(game_name) == "1":
+                user.game1 = 0
+            elif str(game_name) == "2":
+                user.game2 = 0
+            elif str(game_name) == "3":
+                user.game3 = 0
+
+            user.save()
+
+        except CustomUser.DoesNotExist:
+            return Response(
+                {"error": "CustomUser not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        return Response(
+            {"success": "Game created successfully", "game": serializer.data},
+            status=status.HTTP_201_CREATED
+        )
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 @api_view(['PUT'])
 @token_required
 def update_game(request, game_id):
@@ -517,6 +551,8 @@ def toggle_game_access(request):
 
 
 
+from django.http import JsonResponse
+from django.utils.timezone import localtime
 
 @api_view(['GET'])
 @token_required
@@ -526,11 +562,23 @@ def get_games_name(request, user_id):
     except CustomUser.DoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)
 
-    return JsonResponse({
-        'game1': user.game1 or 0,
-        'game2': user.game2 or 0,
-        'game3': user.game3 or 0
-    })
+    # ✅ Fetch last played for each game
+    last_game1 = Game.objects.filter(patient_id_fk=user, name="1").order_by('-created_at').first()
+    last_game2 = Game.objects.filter(patient_id_fk=user, name="2").order_by('-created_at').first()
+    last_game3 = Game.objects.filter(patient_id_fk=user, name="3").order_by('-created_at').first()
+
+    response_data = {
+        "game1": user.game1 or 0,
+        "game1_last_played": localtime(last_game1.created_at).strftime("%Y-%m-%d %H:%M:%S") if last_game1 else None,
+
+        "game2": user.game2 or 0,
+        "game2_last_played": localtime(last_game2.created_at).strftime("%Y-%m-%d %H:%M:%S") if last_game2 else None,
+
+        "game3": user.game3 or 0,
+        "game3_last_played": localtime(last_game3.created_at).strftime("%Y-%m-%d %H:%M:%S") if last_game3 else None,
+    }
+
+    return JsonResponse(response_data)
 
 
 def setting_form(request):
@@ -588,3 +636,68 @@ def setting_time(request):
         },
         status=status.HTTP_200_OK
     )
+
+
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+
+# 👇 This view will render your HTML page in browser
+def feedback_form(request):
+    return render(request, "myapp/create_feedback.html")
+
+def feedback_show(request):
+    return render(request, "myapp/Feedback_Show.html")
+
+
+@api_view(['POST'])
+@token_required
+def create_feedback(request):
+    try:
+        user_id = request.data.get("user_id")
+        name = request.data.get("name")
+        email = request.data.get("email")
+        msg = request.data.get("msg")
+
+        # check if user exists
+        try:
+            user = CustomUser.objects.get(id=user_id)
+        except CustomUser.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        feedback = Feedback.objects.create(
+            user=user,
+            name=name,
+            email=email,
+            msg=msg
+        )
+        serializer = FeedbackSerializer(feedback)
+        return Response({"success": True, "message": "Feedback submitted successfully!", "data": serializer.data},
+                        status=status.HTTP_201_CREATED)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@token_required
+def list_feedback(request):
+    """Fetch feedbacks according to respective patient -> doctor relationship"""
+
+    user = request.user
+    role_name = user.role_id_fk.role_name.lower() if user.role_id_fk else ''
+    user_id = user.id
+
+    if role_name == "doctor":
+        patients = CustomUser.objects.filter(
+            role_id_fk__role_name__iexact="patient",
+            created_by=user_id
+        ).values_list("id", flat=True)
+
+        feedbacks = Feedback.objects.filter(
+        ).order_by('-created_at')
+
+    else:
+        feedbacks = Feedback.objects.all().order_by('-created_at')
+
+    serializer = FeedbackSerializer(feedbacks, many=True)
+    return Response(serializer.data)

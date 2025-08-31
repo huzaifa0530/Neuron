@@ -24,7 +24,11 @@ urlpatterns = [
     path('api/user-games-by-date/<int:user_id>/', views.get_user_games_by_date, name='get_user_games_by_date'),
     path('api/setting/', views.setting_time, name='setting_time'),
     path('setting/', views.setting_form, name='setting_formuser-games-by-date'),
-
+    
+    path('api/feedback/create/', views.create_feedback, name='create_feedback'),
+    path('api/feedback/', views.list_feedback, name='list_feedback'),
+    path("feedback/form/", views.feedback_form, name="feedback_form"), 
+    path("feedback/show/", views.feedback_show, name="feedback_show"), 
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
