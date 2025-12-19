@@ -6,7 +6,6 @@
     <title>Patient List</title>
     {% include 'myapp/partials/headlink.html' %}
     <link rel="stylesheet" href="{% static 'myapp/css/Table.css' %}">
-
 </head>
 
 <body>
@@ -17,14 +16,22 @@
         <div style="display: flex;justify-content: space-between;" class="my-3">
             <h2>Patient List</h2>
         </div>
-        <table id="PatientTable" class="table table-hover align-middle shadow-sm rounded-3 bg-white">
-            <thead class="table-light">
+        <table id="PatientTable" class="table table-bordered">
+            <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Image</th>
                     <th>Name</th>
+                    <th>Username</th>
+                    <th>Email</th>
                     <th>MRNO</th>
+                    <th>Mobile</th>
+                    <th>Address</th>
+                    <th>Age</th>
                     <th>Status</th>
-                    <th class="text-center">Action</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                    <th>Games</th>
                 </tr>
             </thead>
         </table>
@@ -32,23 +39,7 @@
 
     </div>
 
-    <!-- Patient Options Modal -->
-    <div id="patientModal" class="modal fade" tabindex="-1" aria-labelledby="patientModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header text-white" style="background-color:#EA3B3B;">
-                    <h5 class="modal-title" id="patientModalLabel">Patient Options</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <button class="btn btn-view w-100 mb-2" id="viewProfileBtn">View Profile</button>
-                    <button class="btn btn-view w-100 mb-2" id="viewPatientBtn">View Patient</button>
-                    <button class="btn btn-view w-100" id="seeGamesBtn">See Games</button>
-                </div>
-            </div>
-        </div>
-    </div>
+
     <!-- Edit User Modal -->
     <div id="editModal" class="modal fade" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -188,25 +179,6 @@
             </div>
         </div>
     </div>
-    <!-- Patient Detail Modal -->
-    <div id="patientDetailModal" class="modal fade" tabindex="-1" aria-labelledby="patientDetailModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header text-white" style="background-color:#EA3B3B;">
-                    <h5 class="modal-title" id="patientDetailModalLabel">Patient Details</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="patientDetailContent">
-                        <!-- Details will be injected here -->
-                        <p class="text-center text-muted">Loading...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- DataTables Script -->
     <script>
@@ -223,40 +195,39 @@
                     }
                 },
                 "columns": [
+                    { "data": "id" },
                     {
-
                         "data": "user_image",
-                        "render": function (data) {
+                        "render": function (data, type, row) {
                             if (data) {
-                                return `
-                <img src="${data}"
-                     width="50"
-                     height="50"
-                     style="object-fit:cover; border-radius:50%;">
-            `;
+                                return `<img src="${data}" width="50" height="50" style="object-fit:cover; border-radius:50%;">`;
                             } else {
-                                return `
-                <img src="/static/myapp/assets/no-images.png"
-                     width="50"
-                     height="50"
-                     style="object-fit:cover; border-radius:50%; opacity:0.6;">
-            `;
+                                return '<span>No Image</span>';
                             }
                         }
                     },
                     { "data": "name" },
+                    { "data": "username" },
+                    { "data": "email" },
                     { "data": "mrno" },
+                    { "data": "mobile" },
+                    { "data": "address" },
+                    { "data": "age" },
                     { "data": "status" },
+                    { "data": "created_at" },
                     {
                         "data": null,
                         "orderable": false,
                         "searchable": false,
                         "render": function (data, type, row) {
-                            return `<button class="btn btn-view openPatientModalBtn" data-id="${row.id}">
-            <i class="bi bi-eye"></i> View
-          </button>`;
+                            return `
+                    <a href="/patient_profile/" class="text-primary text-decoration-none me-1">
+                       View profile
+                    </a>
+                `;
                         }
-                    }
+                    },
+                    { "data": "games", "orderable": false, "searchable": false }
                 ]
             });
 
@@ -467,93 +438,10 @@
 
 
 
-            // Open modal with selected user
-            $(document).on('click', '.openPatientModalBtn', function () {
-                selectedUserId = $(this).data('id');
-                $('#patientModal').modal('show');
-            });
 
-            // View Profile
-            $('#viewProfileBtn').click(function () {
-                window.location.href = `/patient_profile/`;
-            });
 
-            $('#viewPatientBtn').click(function () {
-                $('#patientModal').modal('hide'); // hide options modal
 
-                $.ajax({
-                    url: `/api/get_user_details/${selectedUserId}/`, // your API endpoint
-                    type: 'GET',
-                    headers: {
-                        'Authorization': token
-                    },
-                    success: function (response) {
-                        let html = `
-           <div class="row align-items-center">
-  <!-- Profile Image -->
-  <div class="col-md-4 text-center border-end">
-    <img src="${response.user_image || '/static/myapp/img/default.png'}"
-         class="rounded-circle shadow mb-3"
-         width="150" height="150"
-         style="object-fit: cover;"
-         alt="User Image"/>
-    <h5 class="mt-2">${response.name || 'N/A'}</h5>
-  </div>
 
-  <!-- Patient Details -->
-  <div class="col-md-8">
-    <dl class="row mb-0">
-      <dt class="col-sm-4">Username:</dt>
-      <dd class="col-sm-8">${response.username || 'N/A'}</dd>
-
-      <dt class="col-sm-4">MRNO:</dt>
-      <dd class="col-sm-8">${response.mrno || 'N/A'}</dd>
-
-      <dt class="col-sm-4">Email:</dt>
-      <dd class="col-sm-8">${response.email || 'N/A'}</dd>
-
-      <dt class="col-sm-4">Mobile:</dt>
-      <dd class="col-sm-8">${response.mobile || 'N/A'}</dd>
-
-      <dt class="col-sm-4">Address:</dt>
-      <dd class="col-sm-8">${response.address || 'N/A'}</dd>
-
-      <dt class="col-sm-4">Age:</dt>
-      <dd class="col-sm-8">${response.age || 'N/A'}</dd>
-
-      <dt class="col-sm-4">Status:</dt>
-      <dd class="col-sm-8">
-        <span class="badge ${response.status === 'Active' ? 'bg-success' : 'bg-danger'}">
-          ${response.status}
-        </span>
-      </dd>
-
-      <dt class="col-sm-4">Created At:</dt>
-      <dd class="col-sm-8">${response.created_at || 'N/A'}</dd>
-
-      <dt class="col-sm-4">Role:</dt>
-      <dd class="col-sm-8">${response.role_name || 'N/A'}</dd>
-    </dl>
-  </div>
-</div>
-
-            `;
-
-                        $('#patientDetailContent').html(html);
-                        $('#patientDetailModal').modal('show');
-                    },
-                    error: function () {
-                        $('#patientDetailContent').html("<p class='text-danger'>Failed to load patient details.</p>");
-                        $('#patientDetailModal').modal('show');
-                    }
-                });
-            });
-
-            $('#seeGamesBtn').click(function () {
-                $('#patientModal').modal('hide');
-                window.currentUserId = selectedUserId;
-                fetchAllGames(selectedUserId);
-            });
 
 
 

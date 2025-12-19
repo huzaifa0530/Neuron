@@ -48,6 +48,7 @@ def api_login_view(request):
                     "status": "success",
                     "message": "User authenticated successfully",
                     "token": token,
+                    "role": user.role_id_fk.role_name if user.role_id_fk else None,
                     "data": serializer.data
                 })
             else:
@@ -77,6 +78,7 @@ def api_login_view(request):
                     "status": "success",
                     "message": "User authenticated successfully",
                     "token": token,
+                    "role": user.role_id_fk.role_name if user.role_id_fk else None,
                     "data": serializer.data
                 })
             else:
@@ -98,11 +100,15 @@ def template_login_view(request):
 
 def template_register_view(request):
     role_name = request.session.get('role_name', '')  
-    if role_name.lower() != "admin":
+    if role_name.lower() != "admin" :
         messages.error(request, "You must be logged in to register a user.")
         return redirect('login')
     roles = Role.objects.all()
     return render(request, 'accounts/register.html', {'roles': roles})
+
+def Signup(request):
+
+    return render(request, 'accounts/doctor_register.html')
 
 
 
@@ -114,7 +120,7 @@ def register_user(request):
   
     user = request.user  
 
-    if user.role_id_fk.role_name.lower() != 'admin':
+    if user.role_id_fk.role_name.lower() == 'patient':
         return Response({"status": "error", "message": "You do not have permission."}, status=status.HTTP_403_FORBIDDEN)
 
     name = request.data.get('name')

@@ -1,0 +1,401 @@
+{% load static %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap"
+    rel="stylesheet">
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Bootstrap Icons CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+<script src="{% static 'myapp/js/session-handler.js' %}"></script>
+
+<style>
+    body {
+        background-color: #F1EAEA;
+        font-family: "Mulish", serif;
+    }
+
+    .navbar {
+        background-color: #F1EAEA;
+    }
+
+    .bi-search {
+        color: black;
+    }
+
+    .bi-bell {
+        color: black;
+    }
+
+    .search-icon-1 {
+        background-color: white;
+        border-radius: 10px;
+    }
+
+    .navbar-nav {
+        align-items: center;
+    }
+
+    .btn-first {
+        background-color: #F8DEBD;
+    }
+
+    .btn-second {
+        background-color: #FBF0F3;
+    }
+
+    .btn-third {
+        background-color: #D0FBFF;
+    }
+
+    .icon-container-1 {
+        background-color: #F8DEBD;
+        border-radius: 10px;
+    }
+
+    .icon-container-2 {
+        background-color: #FBF0F3;
+        border-radius: 10px;
+    }
+
+    .icon-container-3 {
+        background-color: #D0FBFF;
+        border-radius: 10px;
+    }
+
+    .card-header {
+        align-items: baseline;
+        background-color: white;
+        border: none !important;
+    }
+
+    .card {
+        border: 0px;
+    }
+
+    .icon-1 {
+        color: #E79B38;
+        margin: 12px;
+    }
+
+    .icon-2 {
+        color: #CA6B6E;
+        margin: 12px;
+    }
+
+    .icon-3 {
+        color: #478F96;
+        margin: 12px;
+    }
+
+
+    .lb-logo {
+        width: 70px;
+        height: 70px;
+    }
+
+    #lineChart {
+        width: 100%;
+        height: 100px;
+        /* Adjust height as needed */
+    }
+
+    .eeg-recording {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .btn-start-now {
+        background-color: #E8B8B8;
+        font-weight: 600;
+        border: none;
+    }
+
+    .btn-focus-now {
+        background-color: #D6FFDD;
+        font-weight: 600;
+        border: none;
+    }
+
+    .btn-date-now {
+        background-color: #D0FBFF;
+        border: none;
+        font-weight: 600;
+
+    }
+
+    .btn-date-now:hover {
+        background-color: #D0FBFF;
+        border: none;
+    }
+
+    .btn-focus-now:hover {
+        background-color: #D6FFDD;
+        border: none;
+    }
+
+    .sidebar-btn-active {
+        border: none;
+        border-radius: 8px;
+        background-color: black;
+        color: white;
+    }
+
+    .sidebar-btn {
+        border: none;
+        border-radius: 8px;
+        background-color: white;
+        color: grey;
+    }
+
+
+    .black-div {
+        width: 25px;
+        height: auto;
+        background-color: #242426;
+        color: white;
+        border-radius: 25px 0px 0px 25px;
+        transition: width 0.3s ease-in-out;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .black-div .content {
+        opacity: 0;
+        display: none;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .black-div.expanded {
+        width: 50%;
+        /* Expands */
+    }
+
+    .black-div.expanded .content {
+        opacity: 1;
+        display: block;
+    }
+
+    .rightbar-dropdown {
+        background-color: #242426;
+        color: white;
+    }
+
+    .panel-toggle {
+        display: flex;
+    }
+
+    .panel-toggle {
+        position: absolute;
+        left: -11px;
+        top: 4%;
+        transform: translateY(-50%);
+        width: 40px;
+        height: 40px;
+        background: #111;
+        color: #fff;
+        border: none;
+        border-radius: 8px 0 0 8px;
+        font-size: 30px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .panel-toggle:hover {
+        background: #222;
+    }
+
+    .close-btn {
+        display: none;
+    }
+
+    .focus-card {
+        background-color: #4A4949;
+        border-radius: 16px;
+    }
+
+    .focus-inner-card {
+        background-color: #7E7E7E;
+        align-self: flex-start;
+        border-radius: 30px;
+        font-size: 13px;
+    }
+
+    .slider-container {
+        width: 100%;
+        position: relative;
+    }
+
+    .slider {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 20px;
+        border-radius: 50px;
+        background: linear-gradient(to right, #add8e6, #b5f5c8, #fbe79f, #f9a8a8);
+        outline: none;
+        opacity: 0.9;
+        transition: opacity 0.2s;
+    }
+
+    .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: white;
+        border: 2px solid #333;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .slider::-moz-range-thumb {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: white;
+        border: 2px solid #333;
+        cursor: pointer;
+    }
+
+    .labels {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 100%;
+        margin-top: 10px;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .form-check-label {
+        background-color: #7E7E7E;
+        border-radius: 25px;
+    }
+
+    .form-check-input {
+        width: 25px;
+        height: 25px;
+        background-color: #242426;
+    }
+
+
+
+    /* Ensure the background is green when checked */
+    .form-check-input:checked {
+        background-color: #A5F2A8 !important;
+        border-color: #A5F2A8 !important;
+    }
+
+    /* Remove the default blue outline on focus */
+    .form-check-input:focus {
+        box-shadow: 0 0 5px rgba(0, 128, 0, 0.5) !important;
+        /* Green glow */
+        border-color: #A5F2A8 !important;
+    }
+
+    .history-card {
+        width: auto;
+        height: 200px;
+        background-color: white;
+        border-radius: 10px;
+    }
+
+    .pastrecord-card {
+        width: auto;
+        height: 200px;
+        background-color: white;
+        border-radius: 10px;
+
+    }
+
+    .form-check-label {
+        font-size: 14px;
+        align-self: center;
+    }
+
+    .navbar-brand {
+        color: black !important;
+    }
+
+
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        background-color: transparent;
+        color: white;
+        border: none;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 999;
+    }
+
+    .close-btn:hover {
+        color: #EA3B3B;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            max-width: 95%;
+            /* Or whatever you want */
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+    }
+
+    /* Smooth table styling */
+    #top3Table {
+        border: none;
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    #top3Table thead {
+        background: #f9fafb;
+        color: #333;
+        font-weight: 600;
+        text-align: left;
+    }
+
+    #top3Table th,
+    #top3Table td {
+        padding: 12px 16px;
+        border: none !important;
+        /* remove hard borders */
+        vertical-align: middle;
+    }
+
+    #top3Table tbody tr:nth-child(even) {
+        background: #fafafa;
+        /* zebra effect */
+    }
+
+    #top3Table tbody tr:hover {
+        background: #f1f5f9;
+        /* hover effect */
+        transition: 0.2s;
+    }
+
+    /* Flag button style */
+    .flag-btn {
+        background: #ef4444;
+        color: white;
+        border-radius: 8px;
+        border: none;
+        padding: 6px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>

@@ -1,0 +1,120 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games</title>
+    {% include 'myapp/partials/dashboard/headlink.html' %}
+
+    <style>
+        .game-container {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            padding: 50px 0;
+        }
+
+        .game-box {
+            width: 220px;
+            height: 220px;
+            border-radius: 20px;
+            background-color: #dc3545;
+            /* Bootstrap red */
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 6px 15px rgba(220, 53, 69, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .game-box:hover {
+            transform: translateY(-10px);
+            background-color: #b71c1c;
+            /* darker red */
+            box-shadow: 0 10px 20px rgba(183, 28, 28, 0.4);
+        }
+
+        .game-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .game-number {
+            font-size: 2rem;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        .game-name {
+            font-size: 1.4rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+
+    <div class="d-flex w-100">
+        {% include 'myapp/partials/dashboard/sidebar.html' %}
+        <div class="w-100">
+            {% include 'myapp/partials/dashboard/navbar.html' %}
+
+            <!-- Main Content -->
+            <div class="container">
+                <h3 class="mt-4 mb-4 fw-bold text-danger text-center">Available Games</h3>
+                <div class="game-container">
+
+                    <!-- Game 1 -->
+                    <div class="game-box" data-id="3" onclick="redirectToGame(this)">
+                        <div class="game-icon">
+                            <i class="bi bi-controller"></i>
+                        </div>
+                        <div class="game-name">VST</div>
+                    </div>
+
+                    <!-- Game 2 -->
+                    <div class="game-box" data-id="1" onclick="redirectToGame(this)">
+                        <div class="game-icon">
+                            <i class="bi bi-joystick"></i>
+                        </div>
+                        <div class="game-name">RST</div>
+                    </div>
+
+                    <!-- Game 3 -->
+                    <div class="game-box" data-id="2" onclick="redirectToGame(this)">
+                        <div class="game-icon">
+                            <i class="bi bi-lightning-charge-fill"></i>
+                        </div>
+                        <div class="game-name">CPT</div>
+                    </div>
+
+                </div>
+
+                <script>
+                    function redirectToGame(element) {
+                        const gameId = element.getAttribute('data-id');
+                        window.location.href = `/games/details/${gameId}/`;
+                    }
+                </script>
+
+            </div>
+        </div>
+    </div>
+
+    {% include 'myapp/partials/dashboard/script.html' %}
+</body>
+
+</html>

@@ -10,6 +10,12 @@ urlpatterns = [
     path('api/edit_user/', views.edit_user, name='edit_user'),
     path('api/delete_user/', views.delete_user, name='delete_user'),
     path('second_doctor_dashboard/', views.second_dashboard, name='second_dashboard'),
+    path('api/get_top3_patient/', views.get_top3_patient, name='get_top3_patient'),
+    path('patient_profile/', views.patient_profile, name='patient_profile'),
+    path('Report/', views.view_games, name='view_games'),
+    path('games/details/<int:game_id>/', views.game_details, name='game_details'),
+    
+    
     
     path('api/games/', views.get_all_games, name='get_all_games'),
     path('api/games/<int:game_id>/', views.get_game_by_id, name='get_game_by_id'),

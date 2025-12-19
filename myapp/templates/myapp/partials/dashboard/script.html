@@ -1,0 +1,129 @@
+<script>
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const year = today.getFullYear();
+    document.getElementById('current-date').textContent = `${day}-${month}-${year}`;
+</script>
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+
+        // OPEN panel
+        $("#panelToggle").on("click", function (e) {
+            e.stopPropagation();
+
+            $("#blackDiv").addClass("expanded");
+
+            $("#panelToggle").hide();   // hide arrow
+            $("#closeBtn").show();      // show close
+        });
+
+        // CLOSE panel
+        $("#closeBtn").on("click", function (e) {
+            e.stopPropagation();
+
+            $("#blackDiv").removeClass("expanded");
+
+            $("#closeBtn").hide();      // hide close
+            $("#panelToggle").show();   // show arrow
+        });
+
+        // Prevent clicks inside content from closing panel
+        $(".content").on("click", function (e) {
+            e.stopPropagation();
+        });
+    });
+</script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dropdownItems = document.querySelectorAll('.dropdown-item');
+
+        dropdownItems.forEach(function (item) {
+            item.addEventListener('click', function (event) {
+                const name = this.getAttribute('data-name');
+                const mrno = this.getAttribute('data-mrno');
+
+                // Only prevent default if it's a "patient" item
+                if (name && mrno) {
+                    event.preventDefault();
+                    document.getElementById('userNameInput').value = name;
+                    document.getElementById('userMrnoInput').value = mrno;
+                }
+                // otherwise, let normal redirect happen
+            });
+        });
+    });
+</script>
+
+
+<script>
+
+
+
+    // Define EEG channels
+    const eegChannels = ["FP1", "FP2", "FP7", "FP8", "FPZ", "T3", "T4"];
+    const timeLabels = ["09:00", "12:00", "15:00", "18:00"]; // X-axis time points
+
+    // Function to generate random EEG-like data
+    function generateEEGData() {
+        let data = [];
+        for (let i = 0; i < 30; i++) {
+            data.push((Math.sin(i * 0.2) + Math.random() - 0.5) * 4);
+        }
+        return data;
+    }
+
+    // Generate traces for each EEG channel
+    let traces = eegChannels.map((channel, index) => ({
+        x: Array.from({ length: 30 }, (_, i) => i),
+        y: generateEEGData().map(val => val + index * 8),
+        mode: "lines",
+        name: channel,
+        line: { width: 0.8 },
+    }));
+
+    function updateChartSize() {
+        let chartContainer = document.getElementById("eegChart");
+        let newWidth = chartContainer.clientWidth;
+
+        const layout = {
+            title: "EEG Data",
+            xaxis: { title: "Time", tickvals: [0, 10, 20, 30], ticktext: timeLabels },
+            yaxis: { title: "Amplitude (µV)", showgrid: false },
+            showlegend: true,
+            height: 400,
+            width: newWidth, // Make width dynamic
+            margin: { t: 40, l: 40, r: 15, b: 40 }
+        };
+
+        Plotly.newPlot("eegChart", traces, layout);
+    }
+
+    window.addEventListener("resize", updateChartSize);
+    updateChartSize();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tooltipTriggerList = [].slice.call(
+            document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        );
+
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>

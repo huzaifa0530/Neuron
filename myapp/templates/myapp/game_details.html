@@ -1,0 +1,308 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Details</title>
+    {% include 'myapp/partials/dashboard/headlink.html' %}
+    {% include 'myapp/partials/headlink.html' %}
+
+
+
+    <link rel="stylesheet" href="{% static 'myapp/css/Table.css' %}">
+</head>
+
+<body>
+    <div class="d-flex w-100">
+        {% include 'myapp/partials/dashboard/sidebar.html' %}
+        <div class="w-100">
+            {% include 'myapp/partials/dashboard/navbar.html' %}
+
+            <div class="container mt-4">
+                <h3 class="text-danger text-center fw-bold mb-4">
+                    Game Details for
+                    {% if game_id == 1 %} RST {% elif game_id == 2 %} CPT {% elif game_id == 3 %} VST {% endif %}
+                </h3>
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label for="start_date" class="form-label fw-bold">Start Date</label>
+                        <input type="date" id="start_date" class="form-control">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="end_date" class="form-label fw-bold">End Date</label>
+                        <input type="date" id="end_date" class="form-control">
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button id="filterBtn" class="btn btn-primary w-100">Apply Filter</button>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <a id="downloadBtn" href="#" class="btn btn-success w-100">Download CSV</a>
+
+                    </div>
+                </div>
+
+
+                <table id="PatientTable" class="table table-hover align-middle shadow-sm rounded-3 bg-white">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Patient Name</th>
+                            <th>Email</th>
+                            <th>Game ID</th>
+                            <th>Result</th>
+                            <th>Remarks</th>
+
+                            <th>Played On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for g in games %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+
+                            <!-- Patient Name clickable -->
+                            <td>
+                                <a href="#" class="text-primary fw-bold gameItem" data-userid="{{ g.patient_id }}"
+                                    data-gameid="{{ g.id }}" data-gamename="{{ game_id }}">
+                                    {{ g.username }}
+                                </a>
+                            </td>
+
+                            <td>{{ g.email }}</td>
+                            <td>
+                                {% if game_id == 1 %}
+                                RS Mode
+                                {% elif game_id == 2 %}
+                                CPT Mode
+                                {% elif game_id == 3 %}
+                                VST Mode
+                                {% else %}
+                                Unknown
+                                {% endif %}
+                            </td>
+
+                            <td><span class="text-muted">Click Name to View</span></td>
+                            <td>{{ g.remarks }}</td>
+
+                            <td>{{ g.played_on }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7">No records found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for game results -->
+    <div id="resultModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-white" style="background-color:#EA3B3B;">
+                    <h5 class="modal-title" id="resultModalLabel">Game Results</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="loadingMessage" class="text-center fw-bold text-danger" style="display:none;">
+                        Fetching results...
+                    </div>
+                    <table id="resultsTable" class="table table-bordered table-hover mt-2">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+
+          $('#downloadBtn').click(function (e) {
+    e.preventDefault();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentStart = urlParams.get('start_date');
+    const currentEnd = urlParams.get('end_date');
+
+    const startDate = $('#start_date').val() || currentStart;
+    const endDate = $('#end_date').val() || currentEnd;
+
+    let query = `?download=true`;
+    if (startDate && endDate) {
+        query += `&start_date=${startDate}&end_date=${endDate}`;
+    }
+
+    window.location.href = `${window.location.pathname}${query}`;
+});
+
+            $('#filterBtn').click(function () {
+                const startDate = $('#start_date').val();
+                const endDate = $('#end_date').val();
+                let query = '';
+
+                if (startDate && endDate) {
+                    query = `?start_date=${startDate}&end_date=${endDate}`;
+                }
+
+                // Reload the page with filters applied
+                window.location.href = `${window.location.pathname}${query}`;
+            });
+
+       });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#PatientTable').DataTable({
+                pageLength: 10,
+                responsive: true,
+                order: [[0, 'asc']],
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search patient..."
+                }
+            });
+        });
+    </script>
+
+    <script>
+
+
+        $(document).ready(function () {
+            const token = localStorage.getItem("api_token");
+
+            $(document).off('click', '.gameItem').on('click', '.gameItem', function (e) {
+                e.preventDefault();
+
+                const userId = $(this).data('userid'); // this = patient_id_fk
+                const gameId = $(this).data('gameid');
+                const gamename = $(this).data('gamename');
+
+                console.log('Fetching game results for:', userId, gameId, gamename);
+
+                // Show loading message
+                $('#loadingMessage').show();
+                $('#resultsTable thead, #resultsTable tbody').empty();
+
+                $.ajax({
+                    url: `/api/get-game-results/${userId}/${gameId}/`,
+                    method: 'GET',
+                    headers: { 'Authorization': token },
+                    success: function (data) {
+                        $('#loadingMessage').hide();
+                        console.log('Data received:', data);
+
+                        let tableHead = '';
+                        let tableRows = '';
+
+                        // === VST (Game 3) ===
+                        if (gamename == 3) {
+                            tableHead = `
+                                <tr>
+                                    <th>Shape</th>
+                                    <th>Color</th>
+                                    <th>Action</th>
+                                    <th>Display Time</th>
+                                    <th>Tap Time</th>
+                                    <th>Reaction Time (ms)</th>
+                                </tr>`;
+                            (data.results || []).forEach(result => {
+                                const displayTime = new Date(result.display_time);
+                                const tapTime = new Date(result.tap_time);
+                                const reactionTime = tapTime - displayTime;
+
+                                let shapeHTML = '';
+                                const shape = result.shape?.toLowerCase()?.trim();
+                                if (shape === 'circle') {
+                                    shapeHTML = `<div style="width:30px; height:30px; border-radius:50%; background-color:#${result.color};"></div>`;
+                                } else if (shape === 'triangle') {
+                                    shapeHTML = `<div style="width:0; height:0; border-left:15px solid transparent; border-right:15px solid transparent; border-bottom:30px solid #${result.color};"></div>`;
+                                } else if (shape === 'square') {
+                                    shapeHTML = `<div style="width:30px; height:30px; background-color:#${result.color};"></div>`;
+                                }
+
+                                tableRows += `
+                                    <tr>
+                                        <td>${shapeHTML}</td>
+                                        <td>${result.shape}</td>
+                                        <td>${result.action}</td>
+                                        <td>${result.display_time}</td>
+                                        <td>${result.tap_time}</td>
+                                        <td>${reactionTime} ms</td>
+                                    </tr>`;
+                            });
+                        }
+
+                        // === CPT (Game 2) ===
+                        else if (gamename == 2) {
+                            tableHead = `
+                                <tr>
+                                    <th>Letter</th>
+                                    <th>Appearing Time</th>
+                                    <th>Tap Time</th>
+                                    <th>Action</th>
+                                    <th>Reaction Time (ms)</th>
+                                </tr>`;
+                            (data.results || []).forEach(result => {
+                                const appearingTime = new Date(result.appearing_time);
+                                const tapTime = result.tap_time ? new Date(result.tap_time) : null;
+                                const reactionTime = tapTime ? `${tapTime - appearingTime} ms` : 'N/A';
+
+                                tableRows += `
+                                    <tr>
+                                        <td>${result.letter}</td>
+                                        <td>${result.appearing_time}</td>
+                                        <td>${result.tap_time || 'Not tapped'}</td>
+                                        <td>${result.action}</td>
+                                        <td>${reactionTime}</td>
+                                    </tr>`;
+                            });
+                        }
+
+                        // === RST (Game 1) ===
+                        else if (gamename == 1) {
+                            tableHead = `
+                                <tr>
+                                    <th>Trial</th>
+                                    <th>Stimulus</th>
+                                    <th>Response</th>
+                                    <th>Reaction Time (ms)</th>
+                                </tr>`;
+                            (data.results || []).forEach(result => {
+                                tableRows += `
+                                    <tr>
+                                        <td>${result.trial_number}</td>
+                                        <td>${result.stimulus}</td>
+                                        <td>${result.response}</td>
+                                        <td>${result.reaction_time}</td>
+                                    </tr>`;
+                            });
+                        }
+
+                        $('#resultsTable thead').html(tableHead);
+                        $('#resultsTable tbody').html(tableRows);
+                        $('#resultModal').modal('show');
+                    },
+                    error: function (xhr) {
+                        $('#loadingMessage').hide();
+                        console.error('Fetch error:', xhr.responseText);
+                        alert('Failed to fetch game results.');
+                    }
+                });
+            });
+        });
+    </script>
+
+
+    {% include 'myapp/partials/footer.html' %}
+</body>
+
+</html>

@@ -1,6 +1,20 @@
-{% include 'accounts/partials/header.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
 
-
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Register</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap"
+        rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'myapp/css/form.css' %}">
+        <script src="{% static 'myapp/js/session-handler.js' %}"></script>
+</head>
+<body class="bg-dark">
 <div class="container mt-4 mb-5">
     <div class="row justify-content-center">
         <div class="col-lg-5">
@@ -24,17 +38,10 @@
                         <input type="password" name="password" id="password" placeholder="Password" required
                             class="login_field border-0">
                     </div>
-            <div class="form-group" id="roleField">
-    <select name="role" id="role" required class="login_field border-0">
-        <option value="">Select Role</option>
-        <option value="1">Admin</option>
-        <option value="2">Doctor</option>
-    </select>
-</div>
 
-<!-- Hidden input for doctor case -->
-<input type="hidden" name="role" id="hiddenRole" value="2">
-ٖ
+                    <!-- Hidden input for doctor case -->
+                    <input type="hidden" name="role" id="hiddenRole" value="2">
+                    ٖ
                     <button type="submit" class="login_btn">Register</button>
                 </form>
                 <div id="responseMessage"></div>
@@ -53,7 +60,7 @@
             username: $("#username").val(),
             email: $("#email").val(),
             password: $("#password").val(),
-            role: $("#role").val()
+            role: $("#hiddenRole").val() 
         };
 
         const token = localStorage.getItem("api_token");
@@ -109,7 +116,6 @@
 
 
 
-
-
-
-{% include 'accounts/partials/footer.html' %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

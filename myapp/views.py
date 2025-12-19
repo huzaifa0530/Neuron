@@ -205,6 +205,28 @@ def view_users(request):
         users = CustomUser.objects.all()
         return render(request, 'myapp/users_list.html', {'users': users})
 
+def patient_profile(request):
+    role_name = request.session.get('role_name', '').lower()
+
+    if role_name == 'doctor':
+        created_by = request.session.get('user_id')  
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT COUNT(*) FROM users WHERE role_id_fk = 3 AND created_by = %s", [created_by])
+            total_patients = cursor.fetchone()[0]
+        patients = CustomUser.objects.filter(role_id_fk=3, created_by=created_by, status__gt=-1)
+
+        if not patients.exists():
+            print("No patients found for doctor id", created_by)
+
+        patients_list = [{'id': p.id, 'name': p.name,'mrno':p.mrno} for p in patients]
+
+        return render(request, 'myapp/patient_profile.html', {'total_patients': total_patients,
+            'patients': patients_list,
+        })
+
+    else:
+        return redirect('login') 
+
 
 
 @api_view(['GET'])
@@ -275,10 +297,41 @@ def get_users_data(request):
         'data': data
     })
 
+@api_view(['GET'])
+@token_required
+def get_top3_patient(request):
+    """ Fetch top 3 newest users """
+    user = request.user
+    role_name = user.role_id_fk.role_name.lower() if user.role_id_fk else ''
+    user_id = user.id
 
-#               <button class='viewResultsBtn btn btn-sm btn-info' data-userid='{user.id}'>
-#     <i class="fa fa-gamepad"></i> See Games
-# </button>
+    if role_name == "doctor":
+        users = CustomUser.objects.filter(role_id_fk=3, created_by=user_id, status__gt=-1)
+    else:
+        users = CustomUser.objects.all()
+
+    users = users.order_by('-created_at')[:3]
+
+    data = [
+        {
+            'id': u.id,
+            'name': u.name,
+            'username': u.username,
+            'email': u.email,
+            'mobile': u.mobile,
+            'address': u.address,
+            'age': u.age,
+            'mrno': u.mrno,
+            'user_image': u.user_image.url if u.user_image else '',
+            'role': u.role_id_fk.role_name if u.role_id_fk else "N/A",
+            'status': "Active" if u.status == 1 else "Inactive",
+            'created_at': u.created_at.strftime('%Y-%m-%d'),
+        }
+        for u in users
+    ]
+
+    return JsonResponse(data, safe=False)
+
 
 
 @api_view(['GET'])
@@ -295,7 +348,13 @@ def get_user_details(request, user_id):
         data = {
             "id": user.id,
             "name": user.name,
-            "username": user.username,
+            "mrno": user.mrno,
+            "mobile": user.mobile,
+            "address": user.address,
+            "age": user.age,
+            "created_at": user.created_at,
+            "username": user.username,  
+            "user_image": user.user_image.url if user.user_image else None, 
             "email": user.email,
             "role_id": user.role_id_fk.id if user.role_id_fk else None,
             "role_name": user.role_id_fk.role_name if user.role_id_fk else "Unknown",
@@ -701,3 +760,146 @@ def list_feedback(request):
 
     serializer = FeedbackSerializer(feedbacks, many=True)
     return Response(serializer.data)
+
+
+
+
+def view_games(request):
+    return render(request, 'myapp/game.html')
+
+from .models import Game
+import csv
+import json
+import re
+from django.shortcuts import render
+from django.http import HttpResponse
+from django.utils.safestring import mark_safe
+from .models import Game
+import csv
+import json
+import re
+def clean_result(raw_result):
+    """
+    Convert anything (string/dict/list) into a valid JSON string.
+    Fixes cases like:
+    - [{shape:'Circle'}]
+    - [{ shape: "Circle" }]
+    - With None, single quotes, or missing quotes.
+    """
+    import json, re
+
+    # If already a Python list/dict
+    if isinstance(raw_result, (list, dict)):
+        return json.dumps(raw_result)
+
+    # If empty or None
+    if not raw_result:
+        return json.dumps([{"error": "Empty result"}])
+
+    # Force to string
+    text = str(raw_result).strip()
+
+    # Decode escaped unicode
+    try:
+        text = text.encode('utf-8', 'ignore').decode('unicode_escape')
+    except Exception:
+        pass
+
+    # Replace Python literals with JSON ones
+    text = text.replace("None", "null").replace("True", "true").replace("False", "false")
+
+    # Replace single quotes with double quotes carefully
+    text = re.sub(r"'", '"', text)
+
+    # ✅ Fix missing quotes around keys: shape: → "shape":
+    text = re.sub(r'([{,])\s*([A-Za-z_][A-Za-z0-9_]*)\s*:', r'\1"\2":', text)
+
+    # ✅ Remove any trailing commas
+    text = re.sub(r',\s*([\]}])', r'\1', text)
+
+    # Try to validate JSON
+    try:
+        parsed = json.loads(text)
+        return json.dumps(parsed)
+    except Exception as e:
+        print("⚠️ JSON Cleaning Error:", e, "→", text)
+        # Fallback: return safely wrapped string
+        return json.dumps([{"error": "Invalid JSON", "raw": text}])
+from datetime import datetime
+
+import csv
+
+def game_details(request, game_id):
+    GAME_NAMES = {
+        '1': 'RS Mode',
+        '2': 'CPT Mode',
+        '3': 'VST Mode',
+    }
+
+    # Base queryset
+    games = Game.objects.filter(name=str(game_id)).select_related('patient_id_fk')
+
+    # === ✅ 1. Filter by date range FIRST ===
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+
+    if start_date and end_date:
+        try:
+            start = datetime.strptime(start_date, "%Y-%m-%d")
+            end = datetime.strptime(end_date, "%Y-%m-%d")
+            end = end.replace(hour=23, minute=59, second=59)
+            games = games.filter(created_at__range=(start, end))
+        except ValueError:
+            pass
+
+    # === ✅ 2. Then handle CSV Export ===
+    if 'download' in request.GET:
+        response = HttpResponse(content_type='text/csv')
+
+        # make filename dynamic
+        if start_date and end_date:
+            filename = f'game_{game_id}_details_{start_date}_to_{end_date}.csv'
+        else:
+            filename = f'game_{game_id}_details_all.csv'
+
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        writer = csv.writer(response)
+        writer.writerow(['#', 'Patient Name', 'Email', 'Game', 'Result', 'Remarks', 'Status', 'Played On'])
+
+        for idx, g in enumerate(games, start=1):
+            game_label = GAME_NAMES.get(str(g.name), 'Unknown')
+            writer.writerow([
+                idx,
+                getattr(g.patient_id_fk, 'name', 'N/A'),
+                getattr(g.patient_id_fk, 'email', 'N/A'),
+                game_label,
+                clean_result(g.result)[:200],
+                g.remarks or 'N/A',
+                'Active' if g.status == 1 else 'Inactive',
+                g.created_at.strftime("%Y-%m-%d %H:%M:%S") if g.created_at else 'N/A'
+            ])
+        return response
+
+    # === ✅ 3. Otherwise, render HTML ===
+    game_data = []
+    for g in games:
+        cleaned_json = clean_result(g.result)
+        safe_json = mark_safe(cleaned_json)
+        game_data.append({
+            'username': getattr(g.patient_id_fk, 'name', 'N/A'),
+            'email': getattr(g.patient_id_fk, 'email', 'N/A'),
+            'game': g.name,
+            'id': g.id,
+            'patient_id': g.patient_id_fk.id,
+            'result': safe_json,
+            'remarks': g.remarks or 'N/A',
+            'status': 'Active' if g.status == 1 else 'Inactive',
+            'played_on': g.created_at.strftime("%Y-%m-%d %H:%M:%S") if g.created_at else 'N/A'
+        })
+
+    return render(request, 'myapp/game_details.html', {
+        'games': game_data,
+        'game_id': int(game_id),
+        'start_date': start_date or '',
+        'end_date': end_date or '',
+    })

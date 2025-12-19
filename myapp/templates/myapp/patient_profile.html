@@ -1,0 +1,433 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Patient Profile</title>
+    {% include 'myapp/partials/dashboard/headlink.html' %}
+    <style>
+        .panel-toggle {
+            left: -7px;
+            top: 2%;
+            width: 30px;
+            height: 30px;
+            font-size: 30px;
+
+        }
+
+        .panel-toggle {
+            display: none;
+        }
+
+        .close-btn {
+            display: flex;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="d-flex flex-row-reverse">
+            <div id="blackDiv" class="black-div expanded">
+                <button id="panelToggle" class="panel-toggle btn btn-dark" data-bs-toggle="tooltip"
+                    data-bs-placement="left" title="Collapse panel">
+                    ❮
+                </button>
+
+
+
+                <button id="closeBtn" class="close-btn">&times;</button>
+
+                <div class="content">
+                    <div class="container-fluid px-4">
+                        <div class="d-flex justify-content-between mt-5">
+                            <h4 class="text-white">User Profile</h4>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle rightbar-dropdown" type="button"
+                                    id="triggerId" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Patients List
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="triggerId" id="patientsDropdown">
+                                    {% if patients %}
+                                    {% for patient in patients %}
+                                    <a class="dropdown-item" href="#" data-id="{{ patient.id }}"
+                                        data-name="{{ patient.name }}" data-mrno="{{ patient.mrno }}">{{ patient.name
+                                        }}</a>
+                                    {% endfor %}
+                                    {% else %}
+                                    <span class="dropdown-item disabled">No Patients Found</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="card text-white focus-card mt-5 p-4">
+                            <h4>Focus Improvement from Last Visit</h4>
+
+                            <span class="fs-6 p-1 focus-inner-card mt-3">
+                                Access Previous Data
+                            </span>
+
+                            <div class="d-flex mt-3">
+                                <h2 class="ms-3">30%</h2>
+                                <button type="button" class="btn btn-focus-now ms-3">
+                                    Focus
+                                </button>
+
+                            </div>
+                            <div class="slider-container mt-5 mb-4">
+                                <input type="range" min="0" max="100" value="50" class="slider" id="gradientSlider">
+                                <div class="labels">
+                                    <span>100</span>
+                                    <span>50</span>
+                                    <span>0</span>
+                                    <span>-50</span>
+                                    <span>-100</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="text-color w-100 my-5">
+
+                        <div class="row">
+                            <div class="col-6 d-flex flex-column justify-content-between">
+                                <div>
+                                    <h5 class="mb-4">
+                                        Last visit was 3 months ago
+                                    </h5>
+
+                                    <span class="p-2 focus-inner-card rounded-2">
+                                        Access Previous Data
+                                    </span>
+
+                                </div>
+                                <div>
+                                    <h4 class="mt-5 mb-2">
+                                        User Information
+                                    </h4>
+
+                                    <div class="mb-3">
+                                        <input type="text" class="form-control rounded-3" name="" id="userNameInput"
+                                            aria-describedby="helpId" placeholder="User Name" disabled />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <input type="text" class="form-control rounded-3" name="" id="userMrnoInput"
+                                            aria-describedby="helpId" placeholder="MRNO" disabled />
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <h3>Symptom Checklist</h3>
+
+                                <div class="form-check mt-3">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <input class="form-check-input" type="checkbox" id="checkInattentive">
+                                        <label class="form-check-label ms-2 px-3" for="checkInattentive">
+                                            Inattentive
+                                        </label>
+                                    </div>
+
+                                    <div class="d-flex align-items-center mb-2">
+                                        <input class="form-check-input" type="checkbox" id="checkImpulsive">
+                                        <label class="form-check-label ms-2 px-3" for="checkImpulsive">
+                                            Impulsive
+                                        </label>
+                                    </div>
+
+                                    <div class="d-flex align-items-center mb-2">
+                                        <input class="form-check-input" type="checkbox" id="checkDisruptive">
+                                        <label class="form-check-label ms-2 px-3" for="checkDisruptive">
+                                            Disruptive
+                                        </label>
+                                    </div>
+
+                                    <div class="d-flex align-items-center mb-2">
+                                        <input class="form-check-input" type="checkbox" id="checkHyperactive">
+                                        <label class="form-check-label ms-2 px-3" for="checkHyperactive">
+                                            Hyperactive
+                                        </label>
+                                    </div>
+
+                                    <div class="d-flex align-items-center mb-2">
+                                        <input class="form-check-input" type="checkbox" id="checkDysregulation">
+                                        <label class="form-check-label ms-2 px-3" for="checkDysregulation">
+                                            Dysregulation
+                                        </label>
+                                    </div>
+
+                                    <div class="d-flex align-items-center mb-2">
+                                        <input class="form-check-input" type="checkbox" id="checkAnxious">
+                                        <label class="form-check-label ms-2 px-3" for="checkAnxious">
+                                            Anxious
+                                        </label>
+                                    </div>
+
+                                    <div class="d-flex align-items-center mb-2">
+                                        <input class="form-check-input" type="checkbox" id="checkDefault">
+                                        <label class="form-check-label ms-2 px-3" for="checkDefault">
+                                            Default checkbox
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-5 mb-4">
+                            <div class="col-6">
+                                <h4>History</h4>
+                                <div class="history-card"></div>
+                            </div>
+                            <div class="col-6">
+                                <h4>Past Record</h4>
+                                <div class="pastrecord-card"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex w-100">
+                {% include 'myapp/partials/dashboard/sidebar.html' %}
+                <div class="w-100">
+                    <!-- Header & Navbar -->
+                    {% include 'myapp/partials/dashboard/navbar.html' %}
+
+                    <!-- Main Content -->
+                    <div class="container">
+                        <div class="container">
+                            <div class="row mt-2">
+                                <!-- Focus -->
+                                <div class="col-lg-4 col-sm-12">
+                                    <div class="card mb-3 border-0 p-2 shadow-sm rounded-3">
+                                        <div class="card-header d-flex align-items-center bg-white border-0">
+                                            <div class="p-2 rounded-3 d-flex align-items-center justify-content-center"
+                                                style="background:#FDE9D8;">
+                                                <!-- Focus SVG -->
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"
+                                                    fill="#F3A53F" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M8 3.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9m0 1a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7" />
+                                                </svg>
+                                            </div>
+                                            <h6 class="ms-3 text-dark mb-0">Focus</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <h1 class="text-dark fw-normal">80%</h1>
+                                            <span class="badge bg-warning text-dark">Normal</span>
+                                            <div class="chart-container"><canvas id="focusChart"></canvas></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Impulsivity -->
+                                <div class="col-lg-4 col-sm-12">
+                                    <div class="card mb-3 border-0 p-2 shadow-sm rounded-3">
+                                        <div class="card-header d-flex align-items-center bg-white border-0">
+                                            <div class="p-2 rounded-3 d-flex align-items-center justify-content-center"
+                                                style="background:#FDE2E2;">
+                                                <!-- Heartbeat SVG -->
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"
+                                                    fill="#CA6B6E" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M8 2.748-.717 9.93c-.573.57-.717 1.42-.717 2.176C0 14.71 1.79 16 4 16c1.76 0 3.293-1.016 4-2.555C8.707 14.984 10.24 16 12 16c2.21 0 4-1.29 4-3.894 0-.757-.144-1.606-.717-2.176L8 2.748z" />
+                                                </svg>
+                                            </div>
+                                            <h6 class="ms-3 text-dark mb-0">Impulsivity</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <h1 class="text-dark fw-normal">30%</h1>
+                                            <span class="badge bg-danger">Normal</span>
+                                            <div class="chart-container"><canvas id="impulsivityChart"></canvas></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Calmness -->
+                                <div class="col-lg-4 col-sm-12">
+                                    <div class="card mb-3 border-0 p-2 shadow-sm rounded-3">
+                                        <div class="card-header d-flex align-items-center bg-white border-0">
+                                            <div class="p-2 rounded-3 d-flex align-items-center justify-content-center"
+                                                style="background:#D0FBFF;">
+                                                <!-- Droplet SVG -->
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"
+                                                    fill="#478F96" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M4.5 8a3.5 3.5 0 0 1 7 0c0 2.5-3.5 6.5-3.5 6.5S4.5 10.5 4.5 8z" />
+                                                </svg>
+                                            </div>
+                                            <h6 class="ms-3 text-dark mb-0">Calmness</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <h1 class="text-dark fw-normal">60%</h1>
+                                            <span class="badge bg-info text-dark">Normal</span>
+                                            <div class="chart-container"><canvas id="calmnessChart"></canvas></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <!-- Consistency -->
+                            <div class="col-lg-4 col-sm-12">
+                                <div class="card mb-3 border-0 p-2 shadow-sm rounded-3">
+                                    <div class="card-header d-flex align-items-center bg-white border-0">
+                                        <div class="p-2 rounded-3 d-flex align-items-center justify-content-center"
+                                            style="background:#E5F0FF;">
+                                            <!-- Clipboard Data SVG -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"
+                                                fill="#3A82F6" viewBox="0 0 16 16">
+                                                <path d="M10 1.5H6V0h4v1.5z" />
+                                                <path d="M4 3V2h1.5V1h5V2H12v1h1v12H3V3h1zM4 4v10h8V4H4z" />
+                                            </svg>
+                                        </div>
+                                        <h6 class="ms-3 text-dark mb-0">Consistency</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <h1 class="text-dark fw-normal">60%</h1>
+                                        <span class="badge bg-primary">Normal</span>
+                                        <div class="chart-container"><canvas id="consistencyChart"></canvas></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hyperactivity -->
+                            <div class="col-lg-4 col-sm-12">
+                                <div class="card mb-3 border-0 p-2 shadow-sm rounded-3">
+                                    <div class="card-header d-flex align-items-center bg-white border-0">
+                                        <div class="p-2 rounded-3 d-flex align-items-center justify-content-center"
+                                            style="background:#FFE6E6;">
+                                            <!-- Activity (Pulse) SVG -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"
+                                                fill="#E63946" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd"
+                                                    d="M8 3.293l.354.353 5 5-.708.708L8 4.707 3.354 9.354l-.708-.708 5-5L8 3.293z" />
+                                                <path
+                                                    d="M8 4.707l4.646 4.647-.708.707L8 6.121l-3.938 3.94-.708-.708L8 4.707z" />
+                                            </svg>
+                                        </div>
+                                        <h6 class="ms-3 text-dark mb-0">Hyperactivity</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <h1 class="text-dark fw-normal">30%</h1>
+                                        <span class="badge bg-danger">Normal</span>
+                                        <div class="chart-container"><canvas id="hyperChart"></canvas></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Mood Stability -->
+                            <div class="col-lg-4 col-sm-12">
+                                <div class="card mb-3 border-0 p-2 shadow-sm rounded-3">
+                                    <div class="card-header d-flex align-items-center bg-white border-0">
+                                        <div class="p-2 rounded-3 d-flex align-items-center justify-content-center"
+                                            style="background:#E7FBE9;">
+                                            <!-- Smile Emoji SVG -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"
+                                                fill="#28A745" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm-2.285-5.433a.5.5 0 0 1 .57.82A3.5 3.5 0 0 0 8 11.5a3.5 3.5 0 0 0 1.715-.113.5.5 0 0 1 .57-.82A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1-2.285-.933zM5 6.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm6 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+                                            </svg>
+                                        </div>
+                                        <h6 class="ms-3 text-dark mb-0">Mood Stability</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <h1 class="text-dark fw-normal">60%</h1>
+                                        <span class="badge bg-success">Normal</span>
+                                        <div class="chart-container"><canvas id="moodChart"></canvas></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12 col-lg-12">
+                                <div id="eegChart" style="width: 100%; height: 400px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="container mt-5 mb-5">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="card eeg-recording p-3 mb-4">
+                                    <h4>New EEG Recording</h4>
+                                    <button type="button" class="btn btn-start-now">
+                                        Start Now
+                                    </button>
+
+                                </div>
+                            </div>
+                            <!-- 
+                            <div class="col-lg-9">
+                                <div class="card eeg-recording p-3">
+                                    <h4>Upcoming Appointment</h4>
+                                    <button type="button" class="btn btn-date-now">
+                                        August 14, 2024
+                                    </button>
+
+                                </div>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include 'myapp/partials/dashboard/script.html' %}
+
+    <script>
+        function createChart(canvasId, borderColor, bgColor) {
+            new Chart(document.getElementById(canvasId), {
+                type: 'line',
+                data: {
+                    labels: ["", "", "", "", "", ""],
+                    datasets: [{
+                        data: [5, 10, 8, 12, 7, 15],
+                        borderColor: borderColor,
+                        borderWidth: 2,
+                        backgroundColor: bgColor,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { display: false }, y: { display: false } }
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            createChart("focusChart", "#F3A53F", "#F8DEBD");
+            createChart("impulsivityChart", "#CA6B6E", "#DA8184");
+            createChart("calmnessChart", "#478F96", "#D0FBFF");
+            createChart("consistencyChart", "#3B5BDB", "#D0E1FF");
+            createChart("hyperChart", "#E8590C", "#FFD6C2");
+            createChart("moodChart", "#2F9E44", "#D3F9D8");
+        });
+    </script>
+
+
+
+
+</body>
+
+</html>
